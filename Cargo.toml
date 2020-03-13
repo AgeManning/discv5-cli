@@ -1,0 +1,22 @@
+[package]
+name = "discv5-cli"
+version = "0.1.0"
+description = "Simple utility to test discv5"
+authors = ["Age Manning <Age@AgeManning.com>"]
+edition = "2018"
+readme = "./README.md"
+keywords = ["ethereum", "discv5", "discovery", "p2p" ]
+repository = "https://github.com/AgeManning/enr-cli"
+categories = ["cryptography::cryptocurrencies"]
+license = "MIT"
+exclude = [
+	".gitignore",
+	".github/*"
+]
+
+[dependencies]
+libp2p-discv5 = { git = "https://github.com/SigP/rust-libp2p", branch = "discv5" }
+libp2p = { git = "https://github.com/SigP/rust-libp2p", branch = "discv5" }
+clap = "2.33.0"
+futures = "0.1"
+tokio = "0.1"
