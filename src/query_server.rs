@@ -24,8 +24,8 @@ pub async fn run_query_server(mut discv5: Discv5) {
             }
 
             match discv5.poll_next_unpin(cx) {
-                Poll::Ready(Some(event)) => match event {
-                    Discv5Event::FindNodeResult { closer_peers, .. } => {
+                Poll::Ready(Some(event)) => {
+                    if let Discv5Event::FindNodeResult { closer_peers, .. } = event {
                         if !closer_peers.is_empty() {
                             println!("Query Completed. Nodes found:");
                             for n in closer_peers {
@@ -35,8 +35,7 @@ pub async fn run_query_server(mut discv5: Discv5) {
                             println!("Query Completed. No peers found.")
                         }
                     }
-                    _ => (),
-                },
+                }
                 Poll::Ready(None) | Poll::Pending => return Poll::Pending,
             }
         }
