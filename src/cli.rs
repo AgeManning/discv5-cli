@@ -13,7 +13,7 @@ pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
                 .short("l")
                 .required(true)
                 .help("Specifies the listening address of the server.")
-                .default_value("127.0.0.1")
+                .default_value("0.0.0.0")
                 .takes_value(true),
         )
         .arg(
