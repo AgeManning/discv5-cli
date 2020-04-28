@@ -22,7 +22,7 @@ This is a simple CLI utility for creating and debugging discovery v5 servers.
 This can be installed via cargo:
 
 ```bash
-$ cargo install discv5-cli --version 0.1.0-alpha
+$ cargo install discv5-cli
 ```
 
 ## Usage

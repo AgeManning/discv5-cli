@@ -15,8 +15,8 @@ exclude = [
 ]
 
 [dependencies]
-libp2p-discv5 = { git = "https://github.com/SigP/rust-libp2p", branch = "discv5" }
-libp2p = { git = "https://github.com/SigP/rust-libp2p", branch = "discv5" }
+discv5 = "0.1.0-alpha"
 clap = "2.33.0"
-futures = "0.1"
-tokio = "0.1"
+futures = "0.3.4"
+tokio = { version = "0.2.19", features = ["full"] }
+libsecp256k1 = "0.3.5"

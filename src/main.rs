@@ -53,14 +53,13 @@
 //! PeerId: QmdFQ2frpcyD3DiaMcM6XP37X3xCAV81GoB3jRusAa7kxu
 //! ```
 
-use libp2p::core::identity;
-use libp2p_discv5::{enr, Discv5, Discv5Config};
-use std::convert::TryInto;
+use discv5::{enr, enr::CombinedKey, Discv5, Discv5Config};
 use std::net::{IpAddr, SocketAddr};
 mod cli;
 mod query_server;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let cli_matches = cli::start_cli();
 
     // Parse the CLI parameters.
@@ -78,20 +77,16 @@ fn main() {
         .expect("Invalid listening port");
 
     // create the key pair
-    let keypair = if cli_matches.is_present("static-key") {
+    let enr_key = if cli_matches.is_present("static-key") {
         // A fixed key for testing
         let raw_key = vec![
             183, 28, 113, 166, 126, 17, 119, 173, 78, 144, 22, 149, 225, 180, 185, 238, 23, 174,
             22, 198, 102, 141, 49, 62, 172, 47, 150, 219, 205, 163, 242, 145,
         ];
-        let secret_key = identity::secp256k1::SecretKey::from_bytes(raw_key).unwrap();
-        identity::Keypair::Secp256k1(identity::secp256k1::Keypair::from(secret_key))
+        CombinedKey::from(secp256k1::SecretKey::parse_slice(&raw_key).unwrap())
     } else {
-        identity::Keypair::generate_secp256k1()
+        CombinedKey::generate_secp256k1()
     };
-
-    // build an enr key from the libp2p key
-    let enr_key = keypair.clone().try_into().unwrap();
 
     // build the ENR
     let enr = {
@@ -118,7 +113,6 @@ fn main() {
 
     // if the ENR is useful print it
     println!("Node Id: {}", enr.node_id());
-    println!("Peer Id: {}", enr.peer_id());
     if enr.udp_socket().is_some() {
         println!("Base64 ENR: {}", enr.to_base64());
         println!("ip: {}, udp port:{}", enr.ip().unwrap(), enr.udp().unwrap());
@@ -133,13 +127,10 @@ fn main() {
 
     let listen_socket = SocketAddr::new(listen_address, listen_port);
 
-    // unused transport for building a swarm
-    let transport = libp2p::core::transport::dummy::DummyTransport::new();
     // default discv5 configuration
     let config = Discv5Config::default();
-    // construct the discv5 swarm, initializing an unused transport layer
-    let discv5 = Discv5::new(enr, keypair.clone(), config, listen_socket).unwrap();
-    let mut swarm = libp2p::Swarm::new(transport, discv5, keypair.public().into_peer_id());
+    // construct the discv5 service
+    let mut discv5 = Discv5::new(enr, enr_key, config, listen_socket).unwrap();
 
     // try to connect to an ENR if specified
     if let Some(connect_enr) = connect_enr {
@@ -149,9 +140,11 @@ fn main() {
             connect_enr.udp(),
             connect_enr.tcp()
         );
-        swarm.add_enr(connect_enr);
+        if let Err(e) = discv5.add_enr(connect_enr) {
+            println!("ENR not added: {:?}", e);
+        }
     }
 
-    // start the discv5 server
-    query_server::run_query_server(swarm);
+    // start the query
+    query_server::run_query_server(discv5).await;
 }
