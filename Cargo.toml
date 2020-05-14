@@ -22,6 +22,6 @@ tokio = { version = "0.2.19", features = ["full"] }
 libsecp256k1 = "0.3.5"
 sha2 = "0.8.1"
 hex = "0.4.2"
-
-[patch.crates-io]
-discv5 = { path = "../discv5" }
+simple_logger = "1.6.0"
+log = "0.4.8"
+env_logger = "0.7.1"

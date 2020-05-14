@@ -2,6 +2,7 @@
 
 use clap::ArgMatches;
 use discv5::{enr, packet};
+use log::{error, info};
 use sha2::{Digest, Sha256};
 
 /// Decodes a packet based on the CLI options.
@@ -20,7 +21,7 @@ pub fn decode(matches: &ArgMatches) {
         })
         .unwrap_or_else(|| enr::NodeId::parse(&vec![0; 32]).expect("Valid 0 node-id"));
 
-    println!("Using decoding node id: {}", node_id);
+    info!("Using decoding node id: {}", node_id);
 
     let mut hasher = Sha256::new();
     hasher.input(node_id.raw());
@@ -29,7 +30,7 @@ pub fn decode(matches: &ArgMatches) {
     magic.copy_from_slice(&hasher.result());
 
     match discv5::packet::Packet::decode(&packet_bytes, &magic) {
-        Ok(p) => println!("Packet decoded: {:?}", p),
-        Err(e) => println!("Packet failed to be decoded. Error: {:?}", e),
+        Ok(p) => info!("Packet decoded: {:?}", p),
+        Err(e) => error!("Packet failed to be decoded. Error: {:?}", e),
     }
 }
