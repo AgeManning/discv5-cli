@@ -1,11 +1,21 @@
-use clap::{App, Arg};
+use clap::{App, Arg, SubCommand};
 
 pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
     App::new("discv5-cli")
         .version("0.1.0")
         .author("Sigma Prime <contact@sigmaprime.io>")
-        .about("Simple CLI tool for starting and debugging discv5 servers. \
-        This currently runs a discv5 server which regularly performs peer search queries")
+        .about(
+            "Simple CLI tool for starting and debugging discv5 servers and packets. \
+        This currently runs a discv5 server which regularly performs peer search queries",
+        )
+        .subcommand(server_cli())
+        .subcommand(packet_cli())
+        .get_matches()
+}
+
+fn server_cli<'a, 'b>() -> App<'a, 'b> {
+    SubCommand::with_name("server")
+        .about("Runs a discv5 test server")
         .arg(
             Arg::with_name("listen-address")
                 .value_name("IP-ADDRESS")
@@ -60,5 +70,26 @@ pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
                 .help("A base64 ENR that this node will initially connect to.")
                 .takes_value(true),
         )
-        .get_matches()
+}
+
+fn packet_cli<'a, 'b>() -> App<'a, 'b> {
+    SubCommand::with_name("packet")
+        .about("Performs various packet encoding/decoding functions")
+        .subcommand(
+            SubCommand::with_name("decode")
+                .about("decodes packets")
+                .arg(
+                    Arg::with_name("packet")
+                        .value_name("Packet")
+                        .required(true)
+                        .takes_value(true)
+                        .help("The packet to be decoded as a hex string."),
+                )
+                .arg(
+                    Arg::with_name("node_id")
+                        .value_name("Node Id")
+                        .takes_value(true)
+                        .help("The node id of the destination of this packet to determine WHOAREYOU packets as a hex string."),
+                ),
+        )
 }
