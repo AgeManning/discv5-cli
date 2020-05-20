@@ -11,8 +11,8 @@ pub async fn run_query_server(mut discv5: Discv5) {
             _ = query_interval.next() => {
                 // pick a random node target
                 let target_random_node_id = enr::NodeId::random();
-                println!("Connected Peers: {}", discv5.connected_peers());
-                println!("Searching for peers...");
+                info!("Connected Peers: {}", discv5.connected_peers());
+                info!("Searching for peers...");
                 // execute a FINDNODE query
                 discv5.find_node(target_random_node_id);
             }

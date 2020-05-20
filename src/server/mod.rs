@@ -6,7 +6,7 @@ use std::net::{IpAddr, SocketAddr};
 
 // handle a query server
 
-pub async fn run(server_matches: &ArgMatches<'static>) {
+pub async fn run(server_matches: &ArgMatches) {
     let listen_address = server_matches
         .value_of("listen-address")
         .expect("required parameter")

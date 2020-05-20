@@ -1,6 +1,6 @@
 [package]
 name = "discv5-cli"
-version = "0.1.0"
+version = "0.1.1"
 description = "Simple utility to test discv5"
 authors = ["Age Manning <Age@AgeManning.com>"]
 edition = "2018"
@@ -15,13 +15,12 @@ exclude = [
 ]
 
 [dependencies]
-discv5 = "0.1.0-alpha"
-clap = "2.33.0"
-futures = "0.3.4"
-tokio = { version = "0.2.19", features = ["full"] }
+discv5 = "0.1.0-alpha.3"
+clap = "3.0.0-beta.1"
+futures = "0.3.5"
+tokio = { version = "0.2.21", features = ["full"] }
 libsecp256k1 = "0.3.5"
 sha2 = "0.8.1"
 hex = "0.4.2"
 simple_logger = "1.6.0"
 log = "0.4.8"
-env_logger = "0.7.1"
