@@ -20,6 +20,7 @@ pub async fn run_query_server(mut discv5: Discv5) {
                 } else {
                     info!("Query Completed. No peers found.")
                 }
+                tokio::time::delay_for(std::time::Duration::from_secs(5)).await;
                 info!("Connected Peers: {}", discv5.connected_peers());
                 info!("Searching for peers...");
                 // pick a random node target
