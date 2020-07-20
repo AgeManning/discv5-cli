@@ -1,33 +1,35 @@
 use discv5::{enr, Discv5, Discv5Event};
 use futures::prelude::*;
 use log::info;
-use std::time::Duration;
 /// Starts a simple discv5 server which regularly queries for new peers and displays the results.
 pub async fn run_query_server(mut discv5: Discv5) {
-    // construct a 30 second interval to search for new peers.
-    let mut query_interval = tokio::time::interval(Duration::from_secs(30));
+    info!("Searching for peers...");
+    // pick a random node target
+    let target_random_node_id = enr::NodeId::random();
+    // execute a FINDNODE query
+    discv5.find_node(target_random_node_id);
+
     loop {
-        tokio::select! {
-            _ = query_interval.next() => {
-                // pick a random node target
-                let target_random_node_id = enr::NodeId::random();
+        match discv5.next().await {
+            Some(Discv5Event::FindNodeResult { closer_peers, .. }) => {
+                if !closer_peers.is_empty() {
+                    info!("Query Completed. Nodes found:");
+                    for n in closer_peers {
+                        info!("Node: {}", n);
+                    }
+                } else {
+                    info!("Query Completed. No peers found.")
+                }
+                tokio::time::delay_for(std::time::Duration::from_secs(5)).await;
                 info!("Connected Peers: {}", discv5.connected_peers());
                 info!("Searching for peers...");
+                // pick a random node target
+                let target_random_node_id = enr::NodeId::random();
+                info!("Target NodeId: {}", target_random_node_id);
                 // execute a FINDNODE query
-                discv5.find_node(target_random_node_id);
+                discv5.find_enr_predicate(target_random_node_id, |_| true, 16);
             }
-            Some(event) = discv5.next() => {
-                    if let Discv5Event::FindNodeResult { closer_peers, .. } = event {
-                        if !closer_peers.is_empty() {
-                            info!("Query Completed. Nodes found:");
-                            for n in closer_peers {
-                                info!("Node: {}", n);
-                            }
-                        } else {
-                            info!("Query Completed. No peers found.")
-                        }
-                    }
-                }
+            _ => {}
         }
     }
 }
