@@ -1,5 +1,4 @@
-use discv5::{enr, Discv5, Discv5Event};
-use futures::prelude::*;
+use discv5::{enr, Discv5};
 use log::info;
 
 /// Starts a simple discv5 server which regularly queries for new peers and displays the results.
