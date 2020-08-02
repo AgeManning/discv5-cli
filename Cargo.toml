@@ -15,7 +15,7 @@ exclude = [
 ]
 
 [dependencies]
-discv5 = "0.1.0-alpha.3"
+discv5 = "0.1.0-alpha.7"
 clap = "3.0.0-beta.1"
 futures = "0.3.5"
 tokio = { version = "0.2.21", features = ["full"] }
