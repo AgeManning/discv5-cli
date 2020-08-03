@@ -82,7 +82,7 @@ pub async fn run(server_matches: &ArgMatches) {
         .enr_peer_update_min(peer_update_min)
         .build();
     // construct the discv5 service
-    let mut discv5 = Discv5::new(enr, enr_key, config, listen_socket).unwrap();
+    let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
 
     // try to connect to an ENR if specified
     if let Some(connect_enr) = connect_enr {
@@ -96,6 +96,9 @@ pub async fn run(server_matches: &ArgMatches) {
             warn!("ENR not added: {:?}", e);
         }
     }
+
+    // start the server
+    discv5.start(listen_socket);
 
     // start the query
     query_server::run_query_server(discv5).await;
