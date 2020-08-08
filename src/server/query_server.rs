@@ -1,9 +1,9 @@
 use discv5::{enr, Discv5};
 use log::info;
+
 /// Starts a simple discv5 server which regularly queries for new peers and displays the results.
 pub async fn run_query_server(mut discv5: Discv5) {
     loop {
-        info!("Connected Peers: {}", discv5.connected_peers());
         info!("Searching for peers...");
         // pick a random node target
         let target_random_node_id = enr::NodeId::random();
@@ -17,5 +17,6 @@ pub async fn run_query_server(mut discv5: Discv5) {
             }
         }
         tokio::time::delay_for(std::time::Duration::from_secs(5)).await;
+        info!("Connected Peers: {}", discv5.connected_peers());
     }
 }
