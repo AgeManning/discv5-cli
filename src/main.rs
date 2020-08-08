@@ -55,6 +55,7 @@
 
 mod cli;
 mod packet;
+mod request_enr;
 mod server;
 use log::error;
 
@@ -81,6 +82,8 @@ async fn main() {
     // Parse the CLI parameters.
     if let Some(server_matches) = cli_matches.subcommand_matches("server") {
         server::run(server_matches).await;
+    } else if let Some(enr_matches) = cli_matches.subcommand_matches("request-enr") {
+        request_enr::run(enr_matches).await;
     } else if let Some(packet_matches) = cli_matches.subcommand_matches("packet") {
         if let Some(decode_matches) = packet_matches.subcommand_matches("decode") {
             packet::decode(decode_matches);

@@ -7,23 +7,15 @@ pub async fn run_query_server(mut discv5: Discv5) {
         info!("Searching for peers...");
         // pick a random node target
         let target_random_node_id = enr::NodeId::random();
-        // execute a FINDNODE query
         match discv5.find_node(target_random_node_id).await {
-            Ok(found_nodes) => {
-                if found_nodes.is_empty() {
-                    info!("Query Completed. No peers found.")
-                } else {
-                    info!("Query Completed. Nodes found:");
-                    for enr in found_nodes {
-                        info!("Node: {}", enr)
-                    }
+            Err(e) => println!("Find Node result failed: {:?}", e),
+            Ok(found_enrs) => {
+                info!("Query Completed. Nodes found: {}", found_enrs.len());
+                for enr in found_enrs {
+                    info!("Node: {}", enr.node_id());
                 }
             }
-            Err(error) => {
-                info!("Error: {}", error);
-            }
-        };
-
+        }
         tokio::time::delay_for(std::time::Duration::from_secs(5)).await;
         info!("Connected Peers: {}", discv5.connected_peers());
     }

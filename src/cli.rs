@@ -20,6 +20,7 @@ pub fn start_cli() -> clap::ArgMatches {
         )
         .subcommand(server_cli())
         .subcommand(packet_cli())
+        .subcommand(request_enr())
         .get_matches()
 }
 
@@ -110,5 +111,16 @@ fn packet_cli<'a>() -> App<'a> {
                         .takes_value(true)
                         .about("The node id of the destination of this packet to determine WHOAREYOU packets as a hex string."),
                 ),
+        )
+}
+
+fn request_enr<'a>() -> App<'a> {
+    App::new("request-enr")
+        .about("Requests the ENR of a multiaddr")
+        .arg(
+            Arg::with_name("multiaddr")
+                .value_name("MULTIADDR")
+                .takes_value(true)
+                .about("The multiaddr of the node to request their ENR from"),
         )
 }
