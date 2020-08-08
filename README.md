@@ -27,7 +27,7 @@ $ cargo install discv5-cli
 
 ## Usage
 
-```bash
+```
 Sigma Prime <contact@sigmaprime.io>
 Simple CLI tool for starting and debugging discv5 servers and packets. This currently runs a discv5 server which
 regularly performs peer search queries
@@ -44,9 +44,10 @@ OPTIONS:
                                debug, info, warn, error]
 
 SUBCOMMANDS:
-    help      Prints this message or the help of the given subcommand(s)
-    packet    Performs various packet encoding/decoding functions
-    server    Runs a discv5 test server
+    help           Prints this message or the help of the given subcommand(s)
+    packet         Performs various packet encoding/decoding functions
+    request-enr    Requests the ENR of a multiaddr
+    server         Runs a discv5 test server
 ```
 
 ## Example
