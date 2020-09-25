@@ -68,16 +68,19 @@ async fn main() {
         .value_of("log-level")
         .expect("Log level must be present")
     {
-        "trace" => log::Level::Trace,
-        "debug" => log::Level::Debug,
-        "info" => log::Level::Info,
-        "warn" => log::Level::Warn,
-        "error" => log::Level::Error,
+        "trace" => log::LevelFilter::Trace,
+        "debug" => log::LevelFilter::Debug,
+        "info" => log::LevelFilter::Info,
+        "warn" => log::LevelFilter::Warn,
+        "error" => log::LevelFilter::Error,
         _ => unreachable!(),
     };
 
     // initialize the logger
-    simple_logger::init_with_level(log_level).unwrap();
+    simple_logger::SimpleLogger::new()
+        .with_level(log_level)
+        .init()
+        .expect("Could not build the logger");
 
     // Parse the CLI parameters.
     if let Some(server_matches) = cli_matches.subcommand_matches("server") {

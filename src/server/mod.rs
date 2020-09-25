@@ -106,7 +106,9 @@ pub async fn run(server_matches: &ArgMatches) {
     }
 
     // start the server
-    discv5.start(SocketAddr::new(listen_address, listen_port));
+    discv5
+        .start(SocketAddr::new(listen_address, listen_port))
+        .expect("Should be able to start the server");
 
     // start the query
     query_server::run_query_server(discv5).await;

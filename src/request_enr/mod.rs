@@ -39,7 +39,7 @@ pub async fn run(matches: &ArgMatches) {
     let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
 
     // start the server
-    discv5.start(listen_socket);
+    discv5.start(listen_socket).unwrap();
 
     // Request the ENR
     info!("Requesting ENR for: {}", multiaddr);
