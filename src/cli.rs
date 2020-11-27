@@ -2,11 +2,11 @@ use clap::{App, Arg};
 
 pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
     App::new("discv5-cli")
-        .version("0.1.1")
+        .version("0.1.3")
         .author("Sigma Prime <contact@sigmaprime.io>")
-        .help(
+        .about(
             "Simple CLI tool for starting and debugging discv5 servers and packets. \
-        This currently runs a discv5 server which regularly performs peer search queries",
+        This currently runs a discv5 server which regularly performs peer search queries.",
         )
         .arg(
             Arg::with_name("log-level")
@@ -26,7 +26,7 @@ pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
 
 fn server_cli<'a, 'b>() -> App<'a, 'b> {
     App::new("server")
-        .help("Runs a discv5 test server")
+        .about("Runs a discv5 test server")
         .arg(
             Arg::with_name("listen-address")
                 .value_name("IP-ADDRESS")
@@ -94,7 +94,7 @@ fn server_cli<'a, 'b>() -> App<'a, 'b> {
 
 fn packet_cli<'a, 'b>() -> App<'a, 'b> {
     App::new("packet")
-        .help("Performs various packet encoding/decoding functions")
+        .about("Performs various packet encoding/decoding functions")
         .subcommand(
             App::new("decode")
                 .help("decodes packets")
@@ -116,7 +116,7 @@ fn packet_cli<'a, 'b>() -> App<'a, 'b> {
 
 fn request_enr<'a, 'b>() -> App<'a, 'b> {
     App::new("request-enr")
-        .help("Requests the ENR of a multiaddr")
+        .about("Requests the ENR of a multiaddr")
         .arg(
             Arg::with_name("multiaddr")
                 .value_name("MULTIADDR")
