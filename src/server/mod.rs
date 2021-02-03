@@ -33,7 +33,7 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
             183, 28, 113, 166, 126, 17, 119, 173, 78, 144, 22, 149, 225, 180, 185, 238, 23, 174,
             22, 198, 102, 141, 49, 62, 172, 47, 150, 219, 205, 163, 242, 145,
         ];
-        let secret_key = k256::ecdsa::SigningKey::new(&raw_key).unwrap();
+        let secret_key = k256::ecdsa::SigningKey::from_bytes(&raw_key).unwrap();
         CombinedKey::from(secret_key)
     } else {
         CombinedKey::generate_secp256k1()

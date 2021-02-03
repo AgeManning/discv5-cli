@@ -103,8 +103,9 @@ impl CombinedKeyExt for CombinedKey {
     fn from_libp2p(key: &Keypair) -> Result<CombinedKey, &'static str> {
         match key {
             Keypair::Secp256k1(key) => {
-                let secret = discv5::enr::k256::ecdsa::SigningKey::new(&key.secret().to_bytes())
-                    .expect("libp2p key must be valid");
+                let secret =
+                    discv5::enr::k256::ecdsa::SigningKey::from_bytes(&key.secret().to_bytes())
+                        .expect("libp2p key must be valid");
                 Ok(CombinedKey::Secp256k1(secret))
             }
             Keypair::Ed25519(key) => {
