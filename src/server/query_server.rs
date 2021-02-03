@@ -16,7 +16,7 @@ pub async fn run_query_server(mut discv5: Discv5) {
                 }
             }
         }
-        tokio::time::delay_for(std::time::Duration::from_secs(5)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
         info!("Connected Peers: {}", discv5.connected_peers());
     }
 }

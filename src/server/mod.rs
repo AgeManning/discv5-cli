@@ -1,12 +1,12 @@
 pub mod query_server;
 use clap::ArgMatches;
-use discv5::{enr, enr::CombinedKey, Discv5, Discv5ConfigBuilder, TokioExecutor};
+use discv5::{enr, enr::k256, enr::CombinedKey, Discv5, Discv5ConfigBuilder};
 use log::{info, warn};
 use std::net::{IpAddr, SocketAddr};
 
 // handle a query server
 
-pub async fn run(server_matches: &ArgMatches) {
+pub async fn run(server_matches: &ArgMatches<'_>) {
     let listen_address = server_matches
         .value_of("listen-address")
         .expect("required parameter")
@@ -33,7 +33,8 @@ pub async fn run(server_matches: &ArgMatches) {
             183, 28, 113, 166, 126, 17, 119, 173, 78, 144, 22, 149, 225, 180, 185, 238, 23, 174,
             22, 198, 102, 141, 49, 62, 172, 47, 150, 219, 205, 163, 242, 145,
         ];
-        CombinedKey::from(secp256k1::SecretKey::parse_slice(&raw_key).unwrap())
+        let secret_key = k256::ecdsa::SigningKey::from_bytes(&raw_key).unwrap();
+        CombinedKey::from(secret_key)
     } else {
         CombinedKey::generate_secp256k1()
     };
@@ -75,18 +76,8 @@ pub async fn run(server_matches: &ArgMatches) {
             .expect("Invalid base64 encoded ENR")
     });
 
-    let runtime = tokio::runtime::Builder::new()
-        .threaded_scheduler()
-        .thread_name("discv5-cli")
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let executor = TokioExecutor(runtime.handle().clone());
-
     // default discv5 configuration
     let config = Discv5ConfigBuilder::new()
-        .executor(Box::new(executor))
         .enr_peer_update_min(peer_update_min)
         .build();
     // construct the discv5 service
@@ -108,6 +99,7 @@ pub async fn run(server_matches: &ArgMatches) {
     // start the server
     discv5
         .start(SocketAddr::new(listen_address, listen_port))
+        .await
         .expect("Should be able to start the server");
 
     // start the query

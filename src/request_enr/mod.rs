@@ -7,7 +7,7 @@ use std::net::{IpAddr, SocketAddr};
 mod enr_ext;
 use enr_ext::EnrExt;
 
-pub async fn run(matches: &ArgMatches) {
+pub async fn run(matches: &ArgMatches<'_>) {
     // Obtain the multiaddr
     let multiaddr = matches
         .value_of("multiaddr")
@@ -39,14 +39,13 @@ pub async fn run(matches: &ArgMatches) {
     let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
 
     // start the server
-    discv5.start(listen_socket).unwrap();
+    discv5.start(listen_socket).await.unwrap();
 
     // Request the ENR
     info!("Requesting ENR for: {}", multiaddr);
 
     match discv5.request_enr(multiaddr.to_string()).await {
-        Ok(Some(enr)) => print_enr(enr),
-        Ok(None) => info!("No ENR returned"),
+        Ok(enr) => print_enr(enr),
         Err(e) => error!("Failed to obtain ENR. Error: {}", e),
     }
 }
