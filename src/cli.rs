@@ -90,6 +90,11 @@ fn server_cli<'a, 'b>() -> App<'a, 'b> {
                 .help("The minimum number of peers required to update the IP address. Cannot be less than 2.")
                 .takes_value(true),
         )
+        .arg(
+            Arg::with_name("no-search")
+                .short("x")
+                .help("Prevents the server from doing any peer searches.")
+        )
 }
 
 fn packet_cli<'a, 'b>() -> App<'a, 'b> {

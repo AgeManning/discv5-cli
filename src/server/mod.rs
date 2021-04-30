@@ -19,6 +19,8 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
         .parse::<u16>()
         .expect("Invalid listening port");
 
+    let no_search = server_matches.is_present("no-search");
+
     // the number of nodes required to come to consensus before our external IP is updated.
     let peer_update_min = server_matches
         .value_of("peer-update-min")
@@ -84,15 +86,17 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
     let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
 
     // try to connect to an ENR if specified
-    if let Some(connect_enr) = connect_enr {
-        info!(
-            "Connecting to ENR. ip: {:?}, udp_port: {:?},  tcp_port: {:?}",
-            connect_enr.ip(),
-            connect_enr.udp(),
-            connect_enr.tcp()
-        );
-        if let Err(e) = discv5.add_enr(connect_enr) {
-            warn!("ENR not added: {:?}", e);
+    if !no_search {
+        if let Some(connect_enr) = connect_enr {
+            info!(
+                "Connecting to ENR. ip: {:?}, udp_port: {:?},  tcp_port: {:?}",
+                connect_enr.ip(),
+                connect_enr.udp(),
+                connect_enr.tcp()
+            );
+            if let Err(e) = discv5.add_enr(connect_enr) {
+                warn!("ENR not added: {:?}", e);
+            }
         }
     }
 
@@ -103,5 +107,10 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
         .expect("Should be able to start the server");
 
     // start the query
-    query_server::run_query_server(discv5).await;
+    if !no_search {
+        query_server::run_query_server(discv5).await;
+    } else {
+        info!("Server running...");
+        let _ = tokio::signal::ctrl_c().await;
+    }
 }
