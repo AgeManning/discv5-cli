@@ -66,6 +66,19 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
                 builder.udp(enr_port);
             }
         }
+
+        if let Some(seq_no_string) = server_matches.value_of("enr-seq-no") {
+            let seq_no = seq_no_string
+                .parse::<u64>()
+                .expect("Invalid sequence number, must be a uint");
+            builder.seq(seq_no);
+        }
+
+        if let Some(eth2_string) = server_matches.value_of("enr-eth2") {
+            let ssz_bytes = hex::decode(eth2_string).expect("Invalid eth2 hex bytes");
+            builder.add_value("eth2", &ssz_bytes);
+        }
+
         builder.build(&enr_key).unwrap()
     };
 

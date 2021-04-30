@@ -62,6 +62,20 @@ fn server_cli<'a, 'b>() -> App<'a, 'b> {
                 .takes_value(true),
         )
         .arg(
+            Arg::with_name("enr-seq-no")
+                .value_name("UINT")
+                .long("enr-seq-no")
+                .help("Specifies the ENR sequence number when creating the ENR.")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("enr-eth2")
+                .value_name("HEX_BYTES")
+                .long("enr-eth2")
+                .help("Specifies the Eth2 field as ssz encoded hex bytes.")
+                .takes_value(true),
+        )
+        .arg(
             Arg::with_name("enr_default")
                 .short("w")
                 .help("The Enr IP address and port will be the same as the specified listening address and port.")
