@@ -1,6 +1,6 @@
 [package]
 name = "discv5-cli"
-version = "0.2.1"
+version = "0.2.2"
 description = "Simple utility to test discv5"
 authors = ["Age Manning <Age@AgeManning.com>"]
 edition = "2018"

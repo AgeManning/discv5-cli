@@ -73,6 +73,13 @@ fn server_cli<'a, 'b>() -> App<'a, 'b> {
                 .help("Use a fixed static key (hard-coded). This is primarily for debugging.")
         )
         .arg(
+            Arg::with_name("secp256k1-key")
+            .long("secp256k1-key")
+            .short("t")
+            .help("Specify a secp256k1 private key (hex encoded) to use for the nodes identity.")
+            .takes_value(true),
+        )
+        .arg(
             Arg::with_name("enr")
                 .long("enr")
                 .short("e")

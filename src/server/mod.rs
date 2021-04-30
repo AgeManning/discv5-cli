@@ -37,6 +37,11 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
         ];
         let secret_key = k256::ecdsa::SigningKey::from_bytes(&raw_key).unwrap();
         CombinedKey::from(secret_key)
+    } else if let Some(string_key) = server_matches.value_of("secp256k1-key") {
+        let raw_key = hex::decode(string_key).expect("Invalid hex bytes for secp256k1 key");
+        let secret_key =
+            k256::ecdsa::SigningKey::from_bytes(&raw_key).expect("Invalid secp256k1 key");
+        CombinedKey::from(secret_key)
     } else {
         CombinedKey::generate_secp256k1()
     };
