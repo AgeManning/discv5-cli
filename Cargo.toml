@@ -1,6 +1,6 @@
 [package]
 name = "discv5-cli"
-version = "0.2.3"
+version = "0.2.4"
 description = "Simple utility to test discv5"
 authors = ["Age Manning <Age@AgeManning.com>"]
 edition = "2018"
@@ -15,7 +15,7 @@ exclude = [
 ]
 
 [dependencies]
-discv5 = { version = "0.1.0-beta.3", features = ["libp2p"] }
+discv5 = { version = "0.1.0-beta.4", features = ["libp2p"] }
 clap = "2.33.3"
 futures = "0.3.8"
 tokio = { version = "1", features = ["full"] }

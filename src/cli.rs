@@ -2,7 +2,7 @@ use clap::{App, Arg};
 
 pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
     App::new("discv5-cli")
-        .version("0.1.3")
+        .version("0.2.4")
         .author("Sigma Prime <contact@sigmaprime.io>")
         .about(
             "Simple CLI tool for starting and debugging discv5 servers and packets. \
@@ -110,6 +110,19 @@ fn server_cli<'a, 'b>() -> App<'a, 'b> {
                 .default_value("2")
                 .help("The minimum number of peers required to update the IP address. Cannot be less than 2.")
                 .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("break-time")
+                .long("break-time")
+                .default_value("10")
+                .help("The time to wait between successive searches. Default is 10 seconds.")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("stats")
+                .long("stats")
+                .default_value("10")
+                .help("Displays statistics on the local routing table.")
         )
         .arg(
             Arg::with_name("no-search")

@@ -28,6 +28,16 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
         .parse::<usize>()
         .expect("Nodes to implement must be an unsigned integer");
 
+    let time_between_searches = std::time::Duration::from_secs(
+        server_matches
+            .value_of("break-time")
+            .expect("This value must exist")
+            .parse::<u64>()
+            .expect("The break time must be a uint."),
+    );
+
+    let stats = server_matches.is_present("stats");
+
     // create the key pair
     let enr_key = if server_matches.is_present("static-key") {
         // A fixed key for testing
@@ -126,7 +136,7 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
 
     // start the query
     if !no_search {
-        query_server::run_query_server(discv5).await;
+        query_server::run_query_server(discv5, time_between_searches, stats).await;
     } else {
         info!("Server running...");
         let _ = tokio::signal::ctrl_c().await;
