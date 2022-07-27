@@ -79,6 +79,7 @@ async fn main() {
     // initialize the logger
     simple_logger::SimpleLogger::new()
         .with_level(log_level)
+        .with_utc_timestamps()
         .init()
         .expect("Could not build the logger");
 
