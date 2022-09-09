@@ -63,7 +63,7 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
         // if the -w switch is used, use the listen_address and port for the ENR
         if server_matches.is_present("enr_default") {
             builder.ip(listen_address);
-            builder.udp(listen_port);
+            builder.udp4(listen_port);
         } else {
             if let Some(address_string) = server_matches.value_of("enr-address") {
                 let enr_address = address_string
@@ -73,7 +73,7 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
             }
             if let Some(port_string) = server_matches.value_of("enr-port") {
                 let enr_port = port_string.parse::<u16>().expect("Invalid enr-port");
-                builder.udp(enr_port);
+                builder.udp4(enr_port);
             }
         }
 
@@ -94,9 +94,9 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
 
     // if the ENR is useful print it
     info!("Node Id: {}", enr.node_id());
-    if enr.udp_socket().is_some() {
+    if enr.udp4_socket().is_some() {
         info!("Base64 ENR: {}", enr.to_base64());
-        info!("ip: {}, udp port:{}", enr.ip().unwrap(), enr.udp().unwrap());
+        info!("ip: {}, udp port:{}", enr.ip4().unwrap(), enr.udp4().unwrap());
     } else {
         warn!("ENR is not printed as no IP:PORT was specified");
     }
@@ -118,9 +118,9 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
         if let Some(connect_enr) = connect_enr {
             info!(
                 "Connecting to ENR. ip: {:?}, udp_port: {:?},  tcp_port: {:?}",
-                connect_enr.ip(),
-                connect_enr.udp(),
-                connect_enr.tcp()
+                connect_enr.ip4(),
+                connect_enr.udp4(),
+                connect_enr.tcp4()
             );
             if let Err(e) = discv5.add_enr(connect_enr) {
                 warn!("ENR not added: {:?}", e);

@@ -28,7 +28,7 @@ pub async fn run(matches: &ArgMatches<'_>) {
     // build a local ENR
     let enr = enr::EnrBuilder::new("v4")
         .ip(listen_address)
-        .udp(listen_port)
+        .udp4(listen_port)
         .build(&enr_key)
         .unwrap();
 
@@ -56,13 +56,13 @@ fn print_enr(enr: enr::Enr<CombinedKey>) {
     info!("Sequence No:{}", enr.seq());
     info!("NodeId:{}", enr.node_id());
     info!("Libp2p PeerId:{}", enr.peer_id());
-    if let Some(ip) = enr.ip() {
+    if let Some(ip) = enr.ip4() {
         info!("IP:{:?}", ip);
     }
-    if let Some(tcp) = enr.tcp() {
+    if let Some(tcp) = enr.tcp4() {
         info!("TCP Port:{}", tcp);
     }
-    if let Some(udp) = enr.udp() {
+    if let Some(udp) = enr.udp4() {
         info!("UDP Port:{}", udp);
     }
 
