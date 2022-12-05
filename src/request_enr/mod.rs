@@ -1,13 +1,10 @@
-use clap::ArgMatches;
-use discv5::{enr, enr::CombinedKey, Discv5, Discv5ConfigBuilder};
+use discv5::enr;
 use libp2p_core::Multiaddr;
-use log::{error, info};
-use std::net::{IpAddr, SocketAddr};
 
 mod enr_ext;
 use enr_ext::EnrExt;
 
-pub async fn run(matches: &ArgMatches<'_>) {
+pub async fn run(matches: &clap::ArgMatches<'_>) {
     // Obtain the multiaddr
     let multiaddr = matches
         .value_of("multiaddr")
@@ -18,59 +15,57 @@ pub async fn run(matches: &ArgMatches<'_>) {
         })
         .expect("Multiaddr must be provided");
 
-    // set up a server to receive the response
+    // Set up a server to receive the response
     let listen_address = "0.0.0.0"
-        .parse::<IpAddr>()
+        .parse::<std::net::IpAddr>()
         .expect("This is a valid address");
     let listen_port = 9001;
-    let enr_key = CombinedKey::generate_secp256k1();
+    let enr_key = enr::CombinedKey::generate_secp256k1();
 
-    // build a local ENR
+    // Build a local ENR
     let enr = enr::EnrBuilder::new("v4")
         .ip(listen_address)
         .udp4(listen_port)
         .build(&enr_key)
         .unwrap();
 
-    let listen_socket = SocketAddr::new(listen_address, listen_port);
-    // default discv5 configuration
-    let config = Discv5ConfigBuilder::new().build();
-    // construct the discv5 service
-    let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
+    // Construct the discv5 service
+    let listen_socket = std::net::SocketAddr::new(listen_address, listen_port);
+    let config = discv5::Discv5ConfigBuilder::new().build();
+    let mut discv5 = discv5::Discv5::new(enr, enr_key, config).unwrap();
 
-    // start the server
+    // Start the server
     discv5.start(listen_socket).await.unwrap();
 
     // Request the ENR
-    info!("Requesting ENR for: {}", multiaddr);
-
+    log::info!("Requesting ENR for: {}", multiaddr);
     match discv5.request_enr(multiaddr.to_string()).await {
         Ok(enr) => print_enr(enr),
-        Err(e) => error!("Failed to obtain ENR. Error: {}", e),
+        Err(e) => log::error!("Failed to obtain ENR. Error: {}", e),
     }
 }
 
 // Print various information about the obtained ENR.
-fn print_enr(enr: enr::Enr<CombinedKey>) {
-    info!("ENR Found:");
-    info!("Sequence No:{}", enr.seq());
-    info!("NodeId:{}", enr.node_id());
-    info!("Libp2p PeerId:{}", enr.peer_id());
+fn print_enr(enr: enr::Enr<enr::CombinedKey>) {
+    log::info!("ENR Found:");
+    log::info!("Sequence No:{}", enr.seq());
+    log::info!("NodeId:{}", enr.node_id());
+    log::info!("Libp2p PeerId:{}", enr.peer_id());
     if let Some(ip) = enr.ip4() {
-        info!("IP:{:?}", ip);
+        log::info!("IP:{:?}", ip);
     }
     if let Some(tcp) = enr.tcp4() {
-        info!("TCP Port:{}", tcp);
+        log::info!("TCP Port:{}", tcp);
     }
     if let Some(udp) = enr.udp4() {
-        info!("UDP Port:{}", udp);
+        log::info!("UDP Port:{}", udp);
     }
 
     let multiaddrs = enr.multiaddr();
     if !multiaddrs.is_empty() {
-        info!("Known multiaddrs:");
+        log::info!("Known multiaddrs:");
         for multiaddr in multiaddrs {
-            info!("{}", multiaddr);
+            log::info!("{}", multiaddr);
         }
     }
 }

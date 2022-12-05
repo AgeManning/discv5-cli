@@ -80,9 +80,10 @@ async fn main() {
         .with_level(log_level)
         .with_utc_timestamps()
         .init()
-        .is_err() {
-            log::error!("Failed to initialize logger. Please try again.");
-        }
+        .is_err()
+    {
+        log::error!("Failed to initialize logger. Please try again.");
+    }
 
     // Parse the CLI parameters.
     if let Some(server_matches) = cli_matches.subcommand_matches("server") {
