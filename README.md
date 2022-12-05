@@ -53,7 +53,7 @@ SUBCOMMANDS:
 ## Example
 
 ```bash
-$ ./discv5-cli server -l 127.0.0.1 -p 9001 -w -e -IS4QCs0BSKEvnX8om4rAAi7D2p2lwQ7LVpAeESY2ikm1b5dBOqJC7istWMVg06dy-I09C8NuZdodEFNxIiiolWwSWkBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQPKY0yuDUmstAHYpMa2_oxVtw0RW_QAdpzBQA8yWM0xOIN1ZHCCIyg 
+$ ./discv5-cli server -l 127.0.0.1 -p 9001 -w -e -IS4QCs0BSKEvnX8om4rAAi7D2p2lwQ7LVpAeESY2ikm1b5dBOqJC7istWMVg06dy-I09C8NuZdodEFNxIiiolWwSWkBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQPKY0yuDUmstAHYpMa2_oxVtw0RW_QAdpzBQA8yWM0xOIN1ZHCCIyg
 
 2020-05-20 21:15:06,968 INFO  [discv5_cli::server] Node Id: 0x62e5..2ca7
 2020-05-20 21:15:06,968 INFO  [discv5_cli::server] Base64 ENR: enr:-IS4QKzeZIMc6NtdIYGTQvo0Q2Aw0NicbQrW7zArKWU6iNebWMuBTjJnes8nBJ-wAua-W6XNatKBHrNhxFcaUSysVJwBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQIAN7xJ9ce7O7iw-dFrlOzj4sC1Y0Gvic5hb5Rxfs4Xt4N1ZHCCIyk

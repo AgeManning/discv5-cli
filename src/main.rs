@@ -7,7 +7,7 @@
 //! This can be installed via cargo:
 //!
 //! ```bash
-//! $ cargo install discv5-cli --version 0.1.0-alpha
+//! $ cargo install discv5-cli
 //! ```
 //!
 //! ## Usage
@@ -57,13 +57,12 @@ mod cli;
 mod packet;
 mod request_enr;
 mod server;
-use log::error;
 
 #[tokio::main]
 async fn main() {
     let cli_matches = cli::start_cli();
 
-    // set up the logging
+    // Set up the logging
     let log_level = match cli_matches
         .value_of("log-level")
         .expect("Log level must be present")
@@ -76,12 +75,14 @@ async fn main() {
         _ => unreachable!(),
     };
 
-    // initialize the logger
-    simple_logger::SimpleLogger::new()
+    // Initialize the logger
+    if simple_logger::SimpleLogger::new()
         .with_level(log_level)
         .with_utc_timestamps()
         .init()
-        .expect("Could not build the logger");
+        .is_err() {
+            log::error!("Failed to initialize logger. Please try again.");
+        }
 
     // Parse the CLI parameters.
     if let Some(server_matches) = cli_matches.subcommand_matches("server") {
@@ -92,13 +93,9 @@ async fn main() {
         if let Some(decode_matches) = packet_matches.subcommand_matches("decode") {
             packet::decode(decode_matches);
         } else {
-            // Currently no encode sub command
-            error!("A packet subcommand must be supplied. See --help for options");
-            return;
+            log::error!("A packet subcommand must be supplied. See --help for options");
         }
     } else {
-        // No subcommand supplied
-        error!("A subcommand must be supplied. See --help for options");
-        return;
+        log::error!("A subcommand must be supplied. See --help for options");
     }
 }

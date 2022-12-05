@@ -10,7 +10,7 @@ pub async fn run_query_server(mut discv5: Discv5, break_time: Duration, stats: b
         // pick a random node target
         let target_random_node_id = enr::NodeId::random();
         match discv5.find_node(target_random_node_id).await {
-            Err(e) => println!("Find Node result failed: {:?}", e),
+            Err(e) => println!("Find Node result failed: {e:?}"),
             Ok(found_enrs) => {
                 info!("Query Completed. Nodes found: {}", found_enrs.len());
                 for enr in found_enrs {
@@ -42,7 +42,7 @@ fn print_stats(discv5: &mut Discv5) {
         if let Some(bucket_no) = bucket_no {
             bucket_values
                 .entry(bucket_no)
-                .or_insert_with(|| Vec::new())
+                .or_insert_with(Vec::new)
                 .push((enr, status));
         }
     }
