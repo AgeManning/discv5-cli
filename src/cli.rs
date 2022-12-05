@@ -2,7 +2,7 @@ use clap::{App, Arg};
 
 pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
     App::new("discv5-cli")
-        .version("0.2.4")
+        .version("0.2.5")
         .author("Sigma Prime <contact@sigmaprime.io>")
         .about(
             "Simple CLI tool for starting and debugging discv5 servers and packets. \

@@ -18,7 +18,7 @@ pub fn decode(matches: &ArgMatches) {
             enr::NodeId::parse(&hex::decode(bytes).expect("Node Id must be valid hex bytes"))
                 .expect("Must be a valid node-id")
         })
-        .unwrap_or_else(|| enr::NodeId::parse(&vec![0; 32]).expect("Valid 0 node-id"));
+        .unwrap_or_else(|| enr::NodeId::parse(&[0; 32]).expect("Valid 0 node-id"));
 
     info!("Using decoding node id: {}", node_id);
 
