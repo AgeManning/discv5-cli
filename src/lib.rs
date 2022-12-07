@@ -3,11 +3,26 @@
 #![forbid(unsafe_code)]
 #![forbid(where_clauses_object_safety)]
 
-//! Discv5-cli
-//!
-//! 
+//! Core library for the discv5 cli.
 
-mod cli;
-mod packet;
-mod request_enr;
-mod server;
+/// Cli Handlers
+pub mod cli;
+
+/// Packet Handlers
+pub mod packet;
+
+/// Request ENR Handlers
+pub mod request_enr;
+
+/// Server Handlers
+pub mod server;
+
+/// Utility functions
+pub mod utils;
+
+/// A prelude for re-exporting commonly used items.
+pub mod prelude {
+    pub use crate::packet::*;
+    pub use crate::request_enr::*;
+    pub use crate::server::*;
+}

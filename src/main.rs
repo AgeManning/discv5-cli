@@ -1,48 +1,29 @@
 #![doc=include_str!("../README.md")]
 
-
-
-
+use clap::Parser;
+use discv5_cli::{cli, packet, prelude::Packet};
 
 #[tokio::main]
 async fn main() {
-    let cli_matches = cli::start_cli();
+    // Parse the command line arguments
+    let cli = cli::Cli::parse();
 
-    // Set up the logging
-    let log_level = match cli_matches
-        .value_of("log-level")
-        .expect("Log level must be present")
-    {
-        "trace" => log::LevelFilter::Trace,
-        "debug" => log::LevelFilter::Debug,
-        "info" => log::LevelFilter::Info,
-        "warn" => log::LevelFilter::Warn,
-        "error" => log::LevelFilter::Error,
-        _ => unreachable!(),
-    };
+    // Setup logging using the specified log level
+    discv5_cli::utils::logging::construct_simple_logger(cli.log_level);
 
-    // Initialize the logger
-    if simple_logger::SimpleLogger::new()
-        .with_level(log_level)
-        .with_utc_timestamps()
-        .init()
-        .is_err()
-    {
-        log::error!("Failed to initialize logger. Please try again.");
-    }
-
-    // Parse the CLI parameters.
-    if let Some(server_matches) = cli_matches.subcommand_matches("server") {
-        server::run(server_matches).await;
-    } else if let Some(enr_matches) = cli_matches.subcommand_matches("request-enr") {
-        request_enr::run(enr_matches).await;
-    } else if let Some(packet_matches) = cli_matches.subcommand_matches("packet") {
-        if let Some(decode_matches) = packet_matches.subcommand_matches("decode") {
-            packet::decode(decode_matches);
-        } else {
-            log::error!("A packet subcommand must be supplied. See --help for options");
+    // Run the appropriate command
+    match cli.subcommand {
+        Some(cli::Subcommand::Server(ref s)) => {
+            discv5_cli::server::run(s).await;
         }
-    } else {
-        log::error!("A subcommand must be supplied. See --help for options");
+        Some(cli::Subcommand::RequestEnr(ref request_enr)) => {
+            discv5_cli::request_enr::run(request_enr).await;
+        }
+        Some(cli::Subcommand::Packet(Packet { subcommand })) => match subcommand {
+            packet::PacketSubcommand::Decode(ref decode) => {
+                packet::decode(decode);
+            }
+        },
+        _ => log::error!("Unable to parse command line arguments. See --help for options"),
     }
 }

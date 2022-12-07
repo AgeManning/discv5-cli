@@ -4,16 +4,17 @@ use libp2p_core::Multiaddr;
 mod enr_ext;
 use enr_ext::EnrExt;
 
-pub async fn run(matches: &clap::ArgMatches<'_>) {
+/// The [clap] cli command arguments for the request-enr service.
+pub mod command;
+pub use command::*;
+
+/// Runs the request ENR command.
+pub async fn run(req: &RequestEnr) {
     // Obtain the multiaddr
-    let multiaddr = matches
-        .value_of("multiaddr")
-        .map(|m_addr| {
-            m_addr
-                .parse::<Multiaddr>()
-                .expect("Invalid Multiaddr provided")
-        })
-        .expect("Multiaddr must be provided");
+    let multiaddr = req
+        .multiaddr
+        .parse::<Multiaddr>()
+        .expect("Invalid Multiaddr provided");
 
     // Set up a server to receive the response
     let listen_address = "0.0.0.0"

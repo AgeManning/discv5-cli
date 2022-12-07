@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::time::Duration;
 
 /// Starts a simple discv5 server which regularly queries for new peers and displays the results.
-pub async fn run_query_server(mut discv5: Discv5, break_time: Duration, stats: bool) {
+pub async fn run_query_server(mut discv5: Discv5, break_time: Duration, stats: u64) {
     loop {
         info!("Searching for peers...");
         // pick a random node target
@@ -20,7 +20,7 @@ pub async fn run_query_server(mut discv5: Discv5, break_time: Duration, stats: b
         }
 
         // If stats are requested, print some table stats.
-        if stats {
+        if stats > 0 {
             print_stats(&mut discv5);
         }
 
