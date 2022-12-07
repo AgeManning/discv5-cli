@@ -1,5 +1,6 @@
 use clap::{App, Arg};
 
+/// Initiates a [clap] cli.
 pub fn start_cli<'a>() -> clap::ArgMatches<'a> {
     App::new("discv5-cli")
         .version("0.2.5")
@@ -47,7 +48,8 @@ fn server_cli<'a, 'b>() -> App<'a, 'b> {
                 .default_value("9000")
                 .takes_value(true),
         )
-        .arg(
+        .arg(:w
+             
             Arg::with_name("enr-address")
                 .value_name("IP-ADDRESS")
                 .long("enr-address")
