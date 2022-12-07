@@ -27,29 +27,120 @@ $ cargo install discv5-cli
 
 ## Usage
 
+_The following can be viewed by running `discv5-cli --help`_
+
+```bash
+Simple CLI utility for creating and debugging discovery v5 servers
+
+Usage: discv5-cli [OPTIONS] [COMMAND]
+
+Commands:
+  packet
+          Performs packet operations
+  request-enr
+          Requests an ENR from a node
+  server
+          Runs a discv5 test server
+  help
+          Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --log-level <LOG_LEVEL>
+          Sets the logging verbosity level.
+
+          [default: info]
+
+          Possible values:
+          - trace: Trace level
+          - debug: Debug level
+          - info:  Info level
+          - warn:  Warn level
+          - error: Error level
+
+  -h, --help
+          Print help information (use `-h` for a summary)
+
+  -V, --version
+          Print version information
 ```
-discv5-cli 0.2.5
-Sigma Prime <contact@sigmaprime.io>
-Simple CLI tool for starting and debugging discv5 servers and packets. This currently runs a discv5 server which
-regularly performs peer search queries.
 
-USAGE:
-    discv5-cli [OPTIONS] [SUBCOMMAND]
+#### Server
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+The discv5-cli server provides the following options, which can be viewed by running `discv5-cli server --help`:
 
-OPTIONS:
-    -v, --log-level <level>    Specifies the listening address of the server. [default: info]  [possible values: trace,
-                               debug, info, warn, error]
+```bash
+Runs a discv5 test server
 
-SUBCOMMANDS:
-    help           Prints this message or the help of the given subcommand(s)
-    packet         Performs various packet encoding/decoding functions
-    request-enr    Requests the ENR of a multiaddr
-    server         Runs a discv5 test server
+Usage: discv5-cli server [OPTIONS]
+
+Options:
+  -l, --listen-address <LISTEN_ADDRESS>
+          Specifies the listening address of the server. [default: 0.0.0.0]
+  -p, --listen-port <LISTEN_PORT>
+          Specifies the listening UDP port of the server. [default: 9000]
+  -i, --enr-address <ENR_ADDRESS>
+          Specifies the IP address of the ENR record. Not specifying this results in an ENR with no IP field, unless the -w switch is used.
+  -u, --enr-port <ENR_PORT>
+          Specifies the UDP port of the ENR record. Not specifying this results in an ENR with no UDP field, unless the -w switch is used.
+  -q, --enr-seq-no <ENR_SEQ_NO>
+          Specifies the ENR sequence number when creating the ENR.
+  -d, --enr-eth2 <ENR_ETH2>
+          Specifies the Eth2 field as ssz encoded hex bytes.
+  -w, --enr-default
+          The Enr IP address and port will be the same as the specified listening address and port.
+  -k, --static-key
+          Use a fixed static key (hard-coded). This is primarily for debugging.
+  -t, --secp256k1-key <SECP256K1_KEY>
+          Specify a secp256k1 private key (hex encoded) to use for the nodes identity.
+  -e, --enr <ENR>
+          A base64 ENR that this node will initially connect to.
+  -n, --peer-update-min <PEER_UPDATE_MIN>
+          The minimum number of peers required to update the IP address. Cannot be less than 2. [default: 2]
+  -b, --break-time <BREAK_TIME>
+          The time to wait between successive searches. Default is 10 seconds. [default: 10]
+  -s, --stats <STATS>
+          Displays statistics on the local routing table. [default: 10]
+  -x, --no-search
+          Prevents the server from doing any peer searches.
+  -o, --bootstrap <BOOTSTRAP>
+          Bootstraps the server peers from a specified file.
+  -h, --help
+          Print help information
 ```
+
+In order to create an up-to-date `bootstrap.json` file, you can query a beacon-chain rpc using the `/eth/v1/node/peers` endpoint as specified in the [beacon-chain api](https://ethereum.github.io/beacon-APIs/). For example, run `curl http://0.0.0.0:3500/eth/v1/node/peers | jq` to get an output in the same format as [bootstrap.json](./bootstrap.json).
+
+#### Packet
+
+The discv5-cli packet provides the following options, which can be viewed by running `discv5-cli packet --help`:
+
+```bash
+Performs packet operations
+
+Usage: discv5-cli packet <COMMAND>
+
+Commands:
+  decode  Decodes a packet
+  help    Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help information
+```
+
+#### Request-ENR
+
+The discv5-cli request-enr provides the following options, which can be viewed by running `discv5-cli request-enr --help`:
+
+```bash
+Requests an ENR from a node
+
+Usage: discv5-cli request-enr --multiaddr <MULTIADDR>
+
+Options:
+  -m, --multiaddr <MULTIADDR>  The multiaddr of the node to request their ENR from
+  -h, --help                   Print help information
+```
+
 
 ## Examples
 

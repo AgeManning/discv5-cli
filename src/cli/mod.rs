@@ -5,7 +5,7 @@ use crate::utils::logging;
 /// Discv5-cli Args
 #[allow(missing_docs)]
 #[derive(ClapParser, Debug, Clone)]
-#[clap(name = "discv5-cli", version, about, author, long_about)]
+#[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[clap(
         short = 'v',
