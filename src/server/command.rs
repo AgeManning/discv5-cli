@@ -1,7 +1,7 @@
 use clap::Args;
 
 /// Server Command
-#[derive(Args, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Args, Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Server {
     /// Specifies the listening address of the server.
     #[clap(
@@ -107,4 +107,11 @@ pub struct Server {
         help = "Prevents the server from doing any peer searches."
     )]
     pub no_search: bool,
+    /// Bootstraps the server peers
+    #[clap(
+        short = 'o',
+        long = "bootstrap",
+        help = "Bootstraps the server peers from a specified file."
+    )]
+    pub bootstrap: Option<String>,
 }

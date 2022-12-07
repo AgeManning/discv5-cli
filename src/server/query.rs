@@ -1,20 +1,19 @@
 use discv5::{enr, ConnectionDirection, ConnectionState, Discv5};
-use log::info;
 use std::collections::HashMap;
 use std::time::Duration;
 
 /// Starts a simple discv5 server which regularly queries for new peers and displays the results.
-pub async fn run_query_server(mut discv5: Discv5, break_time: Duration, stats: u64) {
+pub async fn run(mut discv5: Discv5, break_time: Duration, stats: u64) {
     loop {
-        info!("Searching for peers...");
+        log::info!("Searching for peers...");
         // pick a random node target
         let target_random_node_id = enr::NodeId::random();
         match discv5.find_node(target_random_node_id).await {
-            Err(e) => println!("Find Node result failed: {e:?}"),
+            Err(e) => log::warn!("Find Node result failed: {e:?}"),
             Ok(found_enrs) => {
-                info!("Query Completed. Nodes found: {}", found_enrs.len());
+                log::info!("Query Completed. Nodes found: {}", found_enrs.len());
                 for enr in found_enrs {
-                    info!("Node: {}", enr.node_id());
+                    log::info!("Node: {}", enr.node_id());
                 }
             }
         }
@@ -25,7 +24,7 @@ pub async fn run_query_server(mut discv5: Discv5, break_time: Duration, stats: u
         }
 
         tokio::time::sleep(break_time).await;
-        info!("Connected Peers: {}", discv5.connected_peers());
+        log::info!("Connected Peers: {}", discv5.connected_peers());
     }
 }
 
@@ -70,6 +69,6 @@ fn print_stats(discv5: &mut Discv5) {
             }
         }
 
-        info!("Bucket {} statistics: Connected peers: {} (Incoming: {}, Outgoing: {}), Disconnected Peers: {}", bucket, connected_peers, connected_incoming_peers, connected_outgoing_peers, disconnected_peers);
+        log::info!("Bucket {} statistics: Connected peers: {} (Incoming: {}, Outgoing: {}), Disconnected Peers: {}", bucket, connected_peers, connected_incoming_peers, connected_outgoing_peers, disconnected_peers);
     }
 }

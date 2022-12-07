@@ -3,7 +3,6 @@ use discv5::packet as discv5_packet;
 
 #[test]
 pub fn test_packet_decoding() {
-    // Construct a random packet
     let source_node_id = discv5_enr::NodeId::random();
     let hex_source_node_id = hex::encode(source_node_id.raw());
     println!("Source node id: {hex_source_node_id:?}");
