@@ -39,15 +39,15 @@ impl EnrExt for Enr {
         let peer_id = self.peer_id();
 
         let mut multiaddrs: Vec<Multiaddr> = Vec::new();
-        if let Some(ip) = self.ip() {
-            if let Some(udp) = self.udp() {
+        if let Some(ip) = self.ip4() {
+            if let Some(udp) = self.udp4() {
                 let mut multiaddr: Multiaddr = ip.into();
                 multiaddr.push(Protocol::Udp(udp));
                 multiaddr.push(Protocol::P2p(peer_id.clone().into()));
                 multiaddrs.push(multiaddr);
             }
 
-            if let Some(tcp) = self.tcp() {
+            if let Some(tcp) = self.tcp4() {
                 let mut multiaddr: Multiaddr = ip.into();
                 multiaddr.push(Protocol::Tcp(tcp));
                 multiaddr.push(Protocol::P2p(peer_id.clone().into()));
