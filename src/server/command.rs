@@ -1,8 +1,22 @@
-use clap::Args;
+use clap::{Args, Subcommand as ClapSubcommand};
+
+/// Server Subcommand
+#[derive(ClapSubcommand, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default)]
+pub enum ServerSubcommand {
+    /// Queries random node ids.
+    #[default]
+    Query,
+    /// Prints the event stream.
+    Events,
+}
 
 /// Server Command
 #[derive(Args, Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Server {
+    /// The service to run once the server is started.
+    #[clap(subcommand)]
+    pub service: ServerSubcommand,
     /// Specifies the listening address of the server.
     #[clap(
         short = 'l',

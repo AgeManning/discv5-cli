@@ -2,17 +2,17 @@ use discv5::{enr, Discv5, Discv5ConfigBuilder};
 use std::{
     convert::TryInto,
     net::{IpAddr, SocketAddr},
-    time::Duration,
+    time::Duration, process::exit, sync::Arc,
 };
+
+/// Services
+pub mod services;
 
 /// Bootstraps server peers from a file.
 pub mod bootstrap;
 
 /// ENR creation.
 pub mod node;
-
-/// The query server.
-pub mod query;
 
 /// Key construction for the server.
 pub mod keys;
@@ -76,12 +76,26 @@ pub async fn run(server: &Server) {
         .expect("Should be able to start the server");
     log::info!("Server listening on {listen_address}:{listen_port}");
 
-    // Start the query service
-    if !server.no_search {
-        log::info!("Query service running...");
-        query::run(discv5, Duration::from_secs(server.break_time), server.stats).await;
-    } else {
+    let server_ref = Arc::new(discv5);
+    if server.stats > 0 {
+        services::stats::run(Arc::clone(&server_ref), None, server.stats);
+    }
+
+    if server.no_search {
         log::info!("Running without query service, press CTRL-C to exit.");
         let _ = tokio::signal::ctrl_c().await;
+        exit(0);
+    }
+
+    // Match on the subcommand and run the appropriate service
+    match server.service {
+        ServerSubcommand::Query => {
+            log::info!("Query service running...");
+            services::query::run(server_ref, Duration::from_secs(server.break_time)).await;
+        }
+        ServerSubcommand::Events => {
+            log::info!("Events service running...");
+            services::events::run(server_ref).await;
+        }
     }
 }
