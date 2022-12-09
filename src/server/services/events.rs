@@ -14,16 +14,29 @@ pub async fn run(discv5: Arc<Discv5>) {
                 log::info!("A peer has been discovered: {}", enr.node_id());
             }
             Some(discv5::Discv5Event::EnrAdded { enr, .. }) => {
-                log::info!("A peer has been added to the routing table with enr: {}", enr);
+                log::info!(
+                    "A peer has been added to the routing table with enr: {}",
+                    enr
+                );
             }
             Some(discv5::Discv5Event::NodeInserted { node_id, .. }) => {
-                log::info!("A peer has been added to the routing table with node_id: {}", node_id);
+                log::info!(
+                    "A peer has been added to the routing table with node_id: {}",
+                    node_id
+                );
             }
             Some(discv5::Discv5Event::SessionEstablished(enr, addr)) => {
-                log::info!("A session has been established with peer: {} at address: {}", enr, addr);
+                log::info!(
+                    "A session has been established with peer: {} at address: {}",
+                    enr,
+                    addr
+                );
             }
             Some(discv5::Discv5Event::TalkRequest(talk_request)) => {
-                log::info!("A talk request has been received from peer: {}", talk_request.node_id());
+                log::info!(
+                    "A talk request has been received from peer: {}",
+                    talk_request.node_id()
+                );
             }
             _ => {}
         }

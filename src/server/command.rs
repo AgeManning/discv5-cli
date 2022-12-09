@@ -1,8 +1,7 @@
 use clap::{Args, Subcommand as ClapSubcommand};
 
 /// Server Subcommand
-#[derive(ClapSubcommand, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-#[derive(Default)]
+#[derive(ClapSubcommand, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub enum ServerSubcommand {
     /// Queries random node ids.
     #[default]

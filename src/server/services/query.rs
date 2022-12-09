@@ -1,5 +1,5 @@
 use discv5::{enr, Discv5};
-use std::{time::Duration, sync::Arc};
+use std::{sync::Arc, time::Duration};
 
 /// Regularly queries for new peers.
 pub async fn run(discv5: Arc<Discv5>, break_time: Duration) {

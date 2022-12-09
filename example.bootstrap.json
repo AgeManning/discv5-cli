@@ -1,0 +1,11 @@
+{
+    "data": [
+        {
+            "peer_id": "16Uiu2HAkwkgy7mrCPnaEHd7p963h28mHqUP8ZsfiQ1wASQaXSrDR",
+            "enr": "enr:-L64QNRkQzCIpFT5eADUZHbHqMC5N4I7413zfGh9wKPdnp83bVuEohLxTKm5GSlbgBN0cXsvo9-W73sl16xAyc2qmduCBz2HYXR0bmV0c4gAAACAAIAEIIRldGgykEomxYsCAAAA__________-CaWSCdjSCaXCEGD25qYlzZWNwMjU2azGhAiKWhtkzs479QTPVgHEOyctOwMg_LP89C2L7265rOglciHN5bmNuZXRzAIN0Y3CCIyiDdWRwgiMo",
+            "last_seen_p2p_address": "/ip4/0.0.0.0/tcp/9000",
+            "state": "connected",
+            "direction": "outbound"
+        }
+    ]
+}

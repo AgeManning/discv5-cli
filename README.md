@@ -108,7 +108,12 @@ Options:
           Print help information
 ```
 
-In order to create an up-to-date `bootstrap.json` file, you can query a beacon-chain rpc using the `/eth/v1/node/peers` endpoint as specified in the [beacon-chain api](https://ethereum.github.io/beacon-APIs/). For example, run `curl http://0.0.0.0:3500/eth/v1/node/peers | jq` to get an output in the same format as [bootstrap.json](./bootstrap.json).
+In order to create an up-to-date `bootstrap.json` file, you can query a beacon-chain rpc using the `/eth/v1/node/peers` endpoint as specified in the [beacon-chain api](https://ethereum.github.io/beacon-APIs/). For example, run `curl http://0.0.0.0:3500/eth/v1/node/peers | jq` on the same machine as your beacon-chain client to get an output in the same format as the example [example.bootstrap.json](./example.bootstrap.json).
+
+> **Note**
+>
+> The peer list should be kept private to prevent information leakage and node doxxing. As such, `bootstrap.json` is ignored in the `.gitignore` file.
+
 
 #### Packet
 

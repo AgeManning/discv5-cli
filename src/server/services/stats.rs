@@ -102,6 +102,4 @@ pub fn print_stats(discv5: Arc<Discv5>, stats: u64) {
             disconnected_peers
         );
     }
-
-
 }

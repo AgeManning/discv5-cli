@@ -2,7 +2,9 @@ use discv5::{enr, Discv5, Discv5ConfigBuilder};
 use std::{
     convert::TryInto,
     net::{IpAddr, SocketAddr},
-    time::Duration, process::exit, sync::Arc,
+    process::exit,
+    sync::Arc,
+    time::Duration,
 };
 
 /// Services

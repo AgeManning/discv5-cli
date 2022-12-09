@@ -1,4 +1,3 @@
-
 /// The query service.
 pub mod query;
 

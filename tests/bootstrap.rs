@@ -10,7 +10,7 @@ pub async fn test_bootstrap_file() -> std::result::Result<(), eyre::Report> {
         enr_address: Some("45.31.182.164".to_string()),
         enr_port: Some(50862),
         enr: Some("-KO4QMMX2IadOccPtAC29ueqrRzNEO5omCNRRTctz-QR20eyMwVR9yl6IDsoxmkg4naImuve8u2H6FO9fsmlXxso-suCAsKEZXRoMpBKJsWLAgAAAP__________gmlkgnY0gmlwhC0ftqSJc2VjcDI1NmsxoQI3vMd58jjnDZQm0KGQpbuWGSW9Bnon1GsF07XnlHna6YN0Y3CCekqDdWRwgsau".to_string()),
-        bootstrap: Some("bootstrap.json".to_string()),
+        bootstrap: Some("example.bootstrap.json".to_string()),
         ..Default::default()
     };
 
