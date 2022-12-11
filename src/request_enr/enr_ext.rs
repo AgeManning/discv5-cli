@@ -15,6 +15,7 @@ pub trait EnrExt {
 
 /// Extend ENR CombinedPublicKey for libp2p types.
 pub trait CombinedKeyPublicExt {
+    #[allow(clippy::wrong_self_convention)]
     /// Converts the publickey into a peer id, without consuming the key.
     fn into_peer_id(&self) -> PeerId;
 }
@@ -65,7 +66,7 @@ impl EnrExt for Enr {
             if let Some(tcp6) = self.tcp6() {
                 let mut multiaddr: Multiaddr = ip6.into();
                 multiaddr.push(Protocol::Tcp(tcp6));
-                multiaddr.push(Protocol::P2p(peer_id.clone().into()));
+                multiaddr.push(Protocol::P2p(peer_id.into()));
                 multiaddrs.push(multiaddr);
             }
         }

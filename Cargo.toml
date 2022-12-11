@@ -1,12 +1,12 @@
 [package]
 name = "discv5-cli"
-version = "0.2.4"
-description = "Simple utility to test discv5"
+version = "0.3.0"
+description = "Simple CLI utility for creating and debugging discovery v5 servers"
 authors = ["Age Manning <Age@AgeManning.com>"]
 edition = "2018"
 readme = "./README.md"
-keywords = ["ethereum", "discv5", "discovery", "p2p" ]
-repository = "https://github.com/AgeManning/enr-cli"
+keywords = ["ethereum", "discv5", "discovery", "p2p", "dht", "kademlia" ]
+repository = "https://github.com/AgeManning/discv5-cli"
 categories = ["cryptography::cryptocurrencies"]
 license = "MIT"
 exclude = [
@@ -15,13 +15,20 @@ exclude = [
 ]
 
 [dependencies]
-discv5 = { version = "0.1.0", features = ["libp2p"] }
-clap = "2.33.3"
-futures = "0.3.8"
+discv5 = { version = "0.1", features = ["libp2p"] }
+sha2 = "0.10"
+libsecp256k1 = "0.3"
+libp2p-core = "0.25"
+clap = { version = "4.0", features = ["derive"] }
+hex = "0.4"
+log = "0.4"
+simple_logger = "4.0"
+futures = "0.3"
 tokio = { version = "1", features = ["full"] }
-libsecp256k1 = "0.3.5"
-sha2 = "0.9.2"
-hex = "0.4.2"
-simple_logger = "1.11.0"
-log = "0.4.11"
-libp2p-core = "0.25.1"
+eyre = "0.6.8"
+serde = "1.0.149"
+serde_json = "1.0.89"
+
+[[bin]]
+name = "discv5-cli"
+path = "src/main.rs"

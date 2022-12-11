@@ -1,29 +1,22 @@
 //! Handles the packet-based logic functions
 
-use clap::ArgMatches;
-use discv5::{enr, packet::Packet};
-use log::{error, info};
+/// The [clap] cli command arguments for the packet service.
+pub mod command;
+pub use command::*;
 
 /// Decodes a packet based on the CLI options.
-pub fn decode(matches: &ArgMatches) {
-    let packet_bytes_string = matches
-        .value_of("packet")
-        .expect("A <packet> must be supplied");
+pub fn decode(decode: &Decode) {
+    let packet_bytes = hex::decode(&decode.packet).expect("Packet bytes must be valid hex");
 
-    let packet_bytes = hex::decode(packet_bytes_string).expect("Packet bytes must be valid hex");
+    let node_id = discv5::enr::NodeId::parse(
+        &hex::decode(&decode.node_id).expect("Node Id must be valid hex bytes"),
+    )
+    .expect("Must be a valid node-id");
 
-    let node_id = matches
-        .value_of("node-id")
-        .map(|bytes| {
-            enr::NodeId::parse(&hex::decode(bytes).expect("Node Id must be valid hex bytes"))
-                .expect("Must be a valid node-id")
-        })
-        .unwrap_or_else(|| enr::NodeId::parse(&vec![0; 32]).expect("Valid 0 node-id"));
+    log::info!("Using decoding node id: {}", node_id);
 
-    info!("Using decoding node id: {}", node_id);
-
-    match Packet::decode(&node_id, &packet_bytes) {
-        Ok(p) => info!("Packet decoded: {:?}", p),
-        Err(e) => error!("Packet failed to be decoded. Error: {:?}", e),
+    match discv5::packet::Packet::decode(&node_id, &packet_bytes) {
+        Ok(p) => log::info!("Packet decoded: {:?}", p),
+        Err(e) => log::error!("Packet failed to be decoded. Error: {:?}", e),
     }
 }
