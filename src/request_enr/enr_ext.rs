@@ -44,14 +44,14 @@ impl EnrExt for Enr {
             if let Some(udp) = self.udp4() {
                 let mut multiaddr: Multiaddr = ip.into();
                 multiaddr.push(Protocol::Udp(udp));
-                multiaddr.push(Protocol::P2p(peer_id.clone().into()));
+                multiaddr.push(Protocol::P2p(peer_id.into()));
                 multiaddrs.push(multiaddr);
             }
 
             if let Some(tcp) = self.tcp4() {
                 let mut multiaddr: Multiaddr = ip.into();
                 multiaddr.push(Protocol::Tcp(tcp));
-                multiaddr.push(Protocol::P2p(peer_id.clone().into()));
+                multiaddr.push(Protocol::P2p(peer_id.into()));
                 multiaddrs.push(multiaddr);
             }
         }
@@ -59,7 +59,7 @@ impl EnrExt for Enr {
             if let Some(udp6) = self.udp6() {
                 let mut multiaddr: Multiaddr = ip6.into();
                 multiaddr.push(Protocol::Udp(udp6));
-                multiaddr.push(Protocol::P2p(peer_id.clone().into()));
+                multiaddr.push(Protocol::P2p(peer_id.into()));
                 multiaddrs.push(multiaddr);
             }
 
@@ -86,7 +86,7 @@ impl CombinedKeyPublicExt for CombinedPublicKey {
                     libp2p_core::identity::secp256k1::PublicKey::decode(&pk_bytes)
                         .expect("valid public key"),
                 );
-                PeerId::from_public_key(libp2p_pk)
+                PeerId::from_public_key(&libp2p_pk)
             }
             Self::Ed25519(pk) => {
                 let pk_bytes = pk.to_bytes();
@@ -94,7 +94,7 @@ impl CombinedKeyPublicExt for CombinedPublicKey {
                     libp2p_core::identity::ed25519::PublicKey::decode(&pk_bytes)
                         .expect("valid public key"),
                 );
-                PeerId::from_public_key(libp2p_pk)
+                PeerId::from_public_key(&libp2p_pk)
             }
         }
     }
@@ -115,6 +115,7 @@ impl CombinedKeyExt for CombinedKey {
                         .expect("libp2p key must be valid");
                 Ok(CombinedKey::from(ed_keypair))
             }
+            #[allow(unreachable_patterns)]
             _ => Err("ENR: Unsupported libp2p key type"),
         }
     }
