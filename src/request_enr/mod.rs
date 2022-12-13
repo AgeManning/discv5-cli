@@ -46,6 +46,7 @@ pub async fn run(matches: &clap::ArgMatches<'_>) {
 }
 
 // Print various information about the obtained ENR.
+<<<<<<< HEAD
 fn print_enr(enr: enr::Enr<enr::CombinedKey>) {
     log::info!("ENR Found:");
     log::info!("Sequence No:{}", enr.seq());
@@ -59,6 +60,21 @@ fn print_enr(enr: enr::Enr<enr::CombinedKey>) {
     }
     if let Some(udp) = enr.udp4() {
         log::info!("UDP Port:{}", udp);
+=======
+fn print_enr(enr: enr::Enr<CombinedKey>) {
+    info!("ENR Found:");
+    info!("Sequence No:{}", enr.seq());
+    info!("NodeId:{}", enr.node_id());
+    info!("Libp2p PeerId:{}", enr.peer_id());
+    if let Some(ip) = enr.ip4() {
+        info!("IP:{:?}", ip);
+    }
+    if let Some(tcp) = enr.tcp4() {
+        info!("TCP Port:{}", tcp);
+    }
+    if let Some(udp) = enr.udp4() {
+        info!("UDP Port:{}", udp);
+>>>>>>> 868b693f7c98eebcd461f7f1d8ed584a0c46ac47
     }
 
     let multiaddrs = enr.multiaddr();
