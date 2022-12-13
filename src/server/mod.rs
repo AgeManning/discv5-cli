@@ -1,122 +1,50 @@
-pub mod query_server;
-use clap::ArgMatches;
-use discv5::{enr, enr::k256, enr::CombinedKey, Discv5, Discv5ConfigBuilder};
-use std::net::{IpAddr, SocketAddr};
+use discv5::{enr, Discv5, Discv5ConfigBuilder};
+use std::{
+    convert::TryInto,
+    net::{IpAddr, SocketAddr},
+    process::exit,
+    sync::Arc,
+    time::Duration,
+};
+
+/// Services
+pub mod services;
+
+/// Bootstraps server peers from a file.
+pub mod bootstrap;
+
+/// ENR creation.
+pub mod node;
+
+/// Key construction for the server.
+pub mod keys;
+
+/// The [clap] cli command arguments for the server service.
+pub mod command;
+pub use command::*;
 
 /// Run the query server
-pub async fn run(server_matches: &ArgMatches<'_>) {
-    let listen_address = server_matches
-        .value_of("listen-address")
-        .expect("required parameter")
-        .parse::<IpAddr>()
-        .expect("Invalid listening address");
-
-    let listen_port = server_matches
-        .value_of("listen-port")
-        .expect("required parameter")
-        .parse::<u16>()
-        .expect("Invalid listening port");
-
-    let no_search = server_matches.is_present("no-search");
-
+pub async fn run(server: &Server) {
     // The number of nodes required to come to consensus before our external IP is updated.
-    let peer_update_min = server_matches
-        .value_of("peer-update-min")
-        .expect("There must be a value for nodes-to-update")
-        .parse::<usize>()
-        .expect("Nodes to implement must be an unsigned integer");
-
-    let time_between_searches = std::time::Duration::from_secs(
-        server_matches
-            .value_of("break-time")
-            .expect("This value must exist")
-            .parse::<u64>()
-            .expect("The break time must be a uint."),
-    );
-
-    let stats = server_matches.is_present("stats");
-
-    // Create the key pair
-    let enr_key = if server_matches.is_present("static-key") {
-        // A fixed key for testing
-        let raw_key = vec![
-            183, 28, 113, 166, 126, 17, 119, 173, 78, 144, 22, 149, 225, 180, 185, 238, 23, 174,
-            22, 198, 102, 141, 49, 62, 172, 47, 150, 219, 205, 163, 242, 145,
-        ];
-        let secret_key = k256::ecdsa::SigningKey::from_bytes(&raw_key).unwrap();
-        CombinedKey::from(secret_key)
-    } else if let Some(string_key) = server_matches.value_of("secp256k1-key") {
-        let raw_key = hex::decode(string_key).expect("Invalid hex bytes for secp256k1 key");
-        let secret_key =
-            k256::ecdsa::SigningKey::from_bytes(&raw_key).expect("Invalid secp256k1 key");
-        CombinedKey::from(secret_key)
-    } else {
-        CombinedKey::generate_secp256k1()
-    };
+    let peer_update_min = server.peer_update_min;
 
     // Build the ENR
-    let enr = {
-        let mut builder = enr::EnrBuilder::new("v4");
+    let enr_key = keys::generate(server).unwrap();
+    let enr = node::build(server, &enr_key).unwrap();
 
-        // if the -w switch is used, use the listen_address and port for the ENR
-        if server_matches.is_present("enr_default") {
-            builder.ip(listen_address);
-            builder.udp4(listen_port);
-        } else {
-            if let Some(address_string) = server_matches.value_of("enr-address") {
-                let enr_address = address_string
-                    .parse::<IpAddr>()
-                    .expect("Invalid enr-address");
-                builder.ip(enr_address);
-            }
-            if let Some(port_string) = server_matches.value_of("enr-port") {
-                let enr_port = port_string.parse::<u16>().expect("Invalid enr-port");
-                builder.udp4(enr_port);
-            }
-        }
-
-        if let Some(seq_no_string) = server_matches.value_of("enr-seq-no") {
-            let seq_no = seq_no_string
-                .parse::<u64>()
-                .expect("Invalid sequence number, must be a uint");
-            builder.seq(seq_no);
-        }
-
-        if let Some(eth2_string) = server_matches.value_of("enr-eth2") {
-            let ssz_bytes = hex::decode(eth2_string).expect("Invalid eth2 hex bytes");
-            builder.add_value("eth2", &ssz_bytes);
-        }
-
-        builder.build(&enr_key).unwrap()
-    };
-
-    // If the ENR is useful print it
-    log::info!("Node Id: {}", enr.node_id());
-    if enr.udp4_socket().is_some() {
-        log::info!("Base64 ENR: {}", enr.to_base64());
-        log::info!(
-            "ip: {}, udp port:{}",
-            enr.ip4().unwrap(),
-            enr.udp4().unwrap()
-        );
-    } else {
-        log::warn!("ENR is not printed as no IP:PORT was specified");
-    }
-
-    let connect_enr = server_matches.value_of("enr").map(|enr| {
+    let connect_enr = server.enr.as_ref().map(|enr| {
         enr.parse::<enr::Enr<enr::CombinedKey>>()
             .expect("Invalid base64 encoded ENR")
     });
 
-    // default discv5 configuration
+    // Build the discv5 server using a default config
     let config = Discv5ConfigBuilder::new()
-        .enr_peer_update_min(peer_update_min)
+        .enr_peer_update_min(peer_update_min.try_into().unwrap())
         .build();
-    // construct the discv5 service
     let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
 
-    // try to connect to an ENR if specified
-    if !no_search {
+    // Connect to an ENR if allowed to search for p2p connections
+    if !server.no_search {
         if let Some(connect_enr) = connect_enr {
             log::info!(
                 "Connecting to ENR. ip: {:?}, udp_port: {:?},  tcp_port: {:?}",
@@ -130,17 +58,46 @@ pub async fn run(server_matches: &ArgMatches<'_>) {
         }
     }
 
+    // Bootstrap the server peers
+    if bootstrap::boostrap(&mut discv5, server.bootstrap.clone())
+        .await
+        .is_err()
+    {
+        log::error!("Failed to bootstrap discv5 server with bootstrap file")
+    }
+
     // Start the discv5 server
+    let listen_address = server
+        .listen_address
+        .parse::<IpAddr>()
+        .expect("Invalid listening address");
+    let listen_port = server.listen_port;
     discv5
         .start(SocketAddr::new(listen_address, listen_port))
         .await
         .expect("Should be able to start the server");
+    log::info!("Server listening on {listen_address}:{listen_port}");
 
-    // start the query
-    if !no_search {
-        query_server::run_query_server(discv5, time_between_searches, stats).await;
-    } else {
-        log::info!("Server running...");
+    let server_ref = Arc::new(discv5);
+    if server.stats > 0 {
+        services::stats::run(Arc::clone(&server_ref), None, server.stats);
+    }
+
+    if server.no_search {
+        log::info!("Running without query service, press CTRL-C to exit.");
         let _ = tokio::signal::ctrl_c().await;
+        exit(0);
+    }
+
+    // Match on the subcommand and run the appropriate service
+    match server.service {
+        ServerSubcommand::Query => {
+            log::info!("Query service running...");
+            services::query::run(server_ref, Duration::from_secs(server.break_time)).await;
+        }
+        ServerSubcommand::Events => {
+            log::info!("Events service running...");
+            services::events::run(server_ref).await;
+        }
     }
 }

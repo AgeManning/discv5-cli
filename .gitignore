@@ -1,2 +1,6 @@
+# Rust-related build files
 Cargo.lock
 target
+
+# Exclude bootstrap json to prevent leakage
+bootstrap.json
