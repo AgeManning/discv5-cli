@@ -1,6 +1,6 @@
 [package]
 name = "discv5-cli"
-version = "0.3.1"
+version = "0.4.0"
 description = "Simple CLI utility for creating and debugging discovery v5 servers"
 authors = ["Age Manning <Age@AgeManning.com>"]
 edition = "2018"
@@ -15,19 +15,20 @@ exclude = [
 ]
 
 [dependencies]
-discv5 = { version = "0.1", features = ["libp2p"] }
+discv5 = { version = "0.2", features = ["libp2p"] }
 sha2 = "0.10"
-libsecp256k1 = "0.7.1"
-libp2p-core = { version = "0.38", features = ["secp256k1"] }
-clap = { version = "4.0", features = ["derive"] }
+libsecp256k1 = "0.7"
+libp2p-identity = { version = "0.1.2", features = ["secp256k1"] }
+libp2p-core = "0.39"
+clap = { version = "4.3", features = ["derive"] }
 hex = "0.4"
 log = "0.4"
-simple_logger = "4.0"
+simple_logger = "4.1"
 futures = "0.3"
 tokio = { version = "1", features = ["full"] }
 eyre = "0.6.8"
-serde = "1.0.149"
-serde_json = "1.0.89"
+serde = "1.0.163"
+serde_json = "1.0.96"
 
 [[bin]]
 name = "discv5-cli"

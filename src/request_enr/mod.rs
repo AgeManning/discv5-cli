@@ -33,7 +33,7 @@ pub async fn run(req: &RequestEnr) {
     // Construct the discv5 service
     let listen_socket = std::net::SocketAddr::new(listen_address, listen_port);
     let config = discv5::Discv5ConfigBuilder::new().build();
-    let mut discv5 = discv5::Discv5::new(enr, enr_key, config).unwrap();
+    let mut discv5: discv5::Discv5 = discv5::Discv5::new(enr, enr_key, config).unwrap();
 
     // Start the server
     discv5.start(listen_socket).await.unwrap();
