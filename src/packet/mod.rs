@@ -15,7 +15,7 @@ pub fn decode(decode: &Decode) {
 
     log::info!("Using decoding node id: {}", node_id);
 
-    match discv5::packet::Packet::decode(&node_id, &packet_bytes) {
+    match discv5::packet::Packet::decode::<discv5::DefaultProtocolId>(&node_id, &packet_bytes) {
         Ok(p) => log::info!("Packet decoded: {:?}", p),
         Err(e) => log::error!("Packet failed to be decoded. Error: {:?}", e),
     }
