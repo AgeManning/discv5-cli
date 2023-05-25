@@ -12,6 +12,6 @@ pub fn test_packet_decoding() {
     println!("Destination node id: {hex_dest_node_id:?}");
 
     let packet = discv5_packet::Packet::new_random(&source_node_id).unwrap();
-    let encoded = hex::encode(packet.encode(&dest_node_id));
+    let encoded = hex::encode(packet.encode::<discv5::DefaultProtocolId>(&dest_node_id));
     println!("Packet as hex: 0x{encoded:?}");
 }
