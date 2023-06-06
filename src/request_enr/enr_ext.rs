@@ -1,6 +1,7 @@
 use discv5::enr::{CombinedKey, CombinedPublicKey};
 use libp2p_core::{multiaddr::Protocol, Multiaddr};
 use libp2p_identity::{Keypair, PeerId};
+use std::convert::TryInto;
 
 type Enr = discv5::enr::Enr<CombinedKey>;
 
@@ -82,7 +83,7 @@ impl CombinedKeyPublicExt for CombinedPublicKey {
     fn into_peer_id(&self) -> PeerId {
         match self {
             Self::Secp256k1(pk) => {
-                let pk_bytes = pk.to_bytes();
+                let pk_bytes = pk.to_sec1_bytes();
                 let libp2p_pk = libp2p_identity::PublicKey::from(
                     libp2p_identity::secp256k1::PublicKey::try_from_bytes(&pk_bytes)
                         .expect("valid public key"),
@@ -104,13 +105,15 @@ impl CombinedKeyPublicExt for CombinedPublicKey {
 impl CombinedKeyExt for CombinedKey {
     fn from_libp2p(key: &Keypair) -> Result<CombinedKey, &'static str> {
         if let Ok(key) = key.clone().try_into_secp256k1() {
-            let secret = discv5::enr::k256::ecdsa::SigningKey::from_bytes(&key.secret().to_bytes())
+            let secret = discv5::enr::k256::ecdsa::SigningKey::from_slice(&key.secret().to_bytes())
                 .expect("libp2p key must be valid");
             Ok(CombinedKey::Secp256k1(secret))
         } else if let Ok(key) = key.clone().try_into_ed25519() {
-            let ed_keypair =
-                discv5::enr::ed25519_dalek::SecretKey::from_bytes(&key.to_bytes()[..32])
-                    .expect("libp2p key must be valid");
+            let ed_keypair = discv5::enr::ed25519_dalek::SigningKey::from_bytes(
+                (key.to_bytes()[..32])
+                    .try_into()
+                    .expect("libp2p key must be valid"),
+            );
             Ok(CombinedKey::from(ed_keypair))
         } else {
             Err("ENR: Unsupported libp2p key type")
