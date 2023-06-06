@@ -50,6 +50,7 @@ jobs:
           profile: minimal
           components: rustfmt, clippy
           override: true
+      - uses: arduino/setup-protoc@v1
       - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:

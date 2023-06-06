@@ -46,14 +46,14 @@ impl EnrExt for Enr {
             if let Some(udp) = self.udp4() {
                 let mut multiaddr: Multiaddr = ip.into();
                 multiaddr.push(Protocol::Udp(udp));
-                multiaddr.push(Protocol::P2p(peer_id.clone().into()));
+                multiaddr.push(Protocol::P2p(peer_id.into()));
                 multiaddrs.push(multiaddr);
             }
 
             if let Some(tcp) = self.tcp4() {
                 let mut multiaddr: Multiaddr = ip.into();
                 multiaddr.push(Protocol::Tcp(tcp));
-                multiaddr.push(Protocol::P2p(peer_id.clone().into()));
+                multiaddr.push(Protocol::P2p(peer_id.into()));
                 multiaddrs.push(multiaddr);
             }
         }
@@ -61,7 +61,7 @@ impl EnrExt for Enr {
             if let Some(udp6) = self.udp6() {
                 let mut multiaddr: Multiaddr = ip6.into();
                 multiaddr.push(Protocol::Udp(udp6));
-                multiaddr.push(Protocol::P2p(peer_id.clone().into()));
+                multiaddr.push(Protocol::P2p(peer_id.into()));
                 multiaddrs.push(multiaddr);
             }
 
