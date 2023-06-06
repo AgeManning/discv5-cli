@@ -1,6 +1,6 @@
 [package]
 name = "discv5-cli"
-version = "0.4.0"
+version = "0.5.0"
 description = "Simple CLI utility for creating and debugging discovery v5 servers"
 authors = ["Age Manning <Age@AgeManning.com>"]
 edition = "2018"
