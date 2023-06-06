@@ -19,7 +19,7 @@ pub async fn run(req: &RequestEnr) {
     // Set up a server to receive the response
     let listen_address = std::net::Ipv4Addr::UNSPECIFIED;
     let listen_port = 9001;
-    let listen_config = ListenConfig::new_ipv4(listen_address, listen_port);
+    let listen_config = ListenConfig::from_ip(listen_address.into(), listen_port);
     let enr_key = enr::CombinedKey::generate_secp256k1();
 
     // Build a local ENR

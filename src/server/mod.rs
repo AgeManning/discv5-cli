@@ -40,7 +40,10 @@ pub async fn run(server: &Server) {
     let mut ipv4_address = None;
     let mut ipv6_address = None;
     for address in server.listen_addresses.split(',') {
-        match address.parse::<IpAddr>().expect("Invalid listening address") {
+        match address
+            .parse::<IpAddr>()
+            .expect("Invalid listening address")
+        {
             IpAddr::V4(ip) => ipv4_address = Some(ip),
             IpAddr::V6(ip) => ipv6_address = Some(ip),
         }
@@ -49,8 +52,10 @@ pub async fn run(server: &Server) {
     let listen_port = server.listen_port;
     let listen_port_v6 = server.listen_port_v6;
 
-    let listen_config = ListenConfig::from_two_sockets(ipv4_address.map(|v| SocketAddrV4::new(v, listen_port)), ipv6_address.map(|v| SocketAddrV6::new(v, listen_port_v6.unwrap_or(listen_port), 0, 0)));
-
+    let listen_config = ListenConfig::from_two_sockets(
+        ipv4_address.map(|v| SocketAddrV4::new(v, listen_port)),
+        ipv6_address.map(|v| SocketAddrV6::new(v, listen_port_v6.unwrap_or(listen_port), 0, 0)),
+    );
 
     log::info!("Server listening on {:?}", listen_config);
     // Build the discv5 server using a default config
@@ -87,7 +92,6 @@ pub async fn run(server: &Server) {
         .start()
         .await
         .expect("Should be able to start the server");
-
 
     let server_ref = Arc::new(discv5);
     if server.stats > 0 {
