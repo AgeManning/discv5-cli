@@ -1,4 +1,4 @@
-use discv5::enr;
+use discv5::{enr, ListenConfig};
 use libp2p_core::Multiaddr;
 
 mod enr_ext;
@@ -17,26 +17,24 @@ pub async fn run(req: &RequestEnr) {
         .expect("Invalid Multiaddr provided");
 
     // Set up a server to receive the response
-    let listen_address = "0.0.0.0"
-        .parse::<std::net::IpAddr>()
-        .expect("This is a valid address");
+    let listen_address = std::net::Ipv4Addr::UNSPECIFIED;
     let listen_port = 9001;
+    let listen_config = ListenConfig::from_ip(listen_address.into(), listen_port);
     let enr_key = enr::CombinedKey::generate_secp256k1();
 
     // Build a local ENR
     let enr = enr::EnrBuilder::new("v4")
-        .ip(listen_address)
+        .ip4(listen_address)
         .udp4(listen_port)
         .build(&enr_key)
         .unwrap();
 
     // Construct the discv5 service
-    let listen_socket = std::net::SocketAddr::new(listen_address, listen_port);
-    let config = discv5::Discv5ConfigBuilder::new().build();
+    let config = discv5::Discv5ConfigBuilder::new(listen_config).build();
     let mut discv5: discv5::Discv5 = discv5::Discv5::new(enr, enr_key, config).unwrap();
 
     // Start the server
-    discv5.start(listen_socket).await.unwrap();
+    discv5.start().await.unwrap();
 
     // Request the ENR
     log::info!("Requesting ENR for: {}", multiaddr);

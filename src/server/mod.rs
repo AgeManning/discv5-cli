@@ -1,7 +1,7 @@
-use discv5::{enr, Discv5, Discv5ConfigBuilder};
+use discv5::{enr, Discv5, Discv5ConfigBuilder, ListenConfig};
 use std::{
     convert::TryInto,
-    net::{IpAddr, SocketAddr},
+    net::{IpAddr, SocketAddrV4, SocketAddrV6},
     process::exit,
     sync::Arc,
     time::Duration,
@@ -14,7 +14,7 @@ pub mod services;
 pub mod bootstrap;
 
 /// ENR creation.
-pub mod node;
+pub mod enr_build;
 
 /// Key construction for the server.
 pub mod keys;
@@ -30,15 +30,36 @@ pub async fn run(server: &Server) {
 
     // Build the ENR
     let enr_key = keys::generate(server).unwrap();
-    let enr = node::build(server, &enr_key).unwrap();
+    let enr = enr_build::build(server, &enr_key).unwrap();
 
     let connect_enr = server.enr.as_ref().map(|enr| {
         enr.parse::<enr::Enr<enr::CombinedKey>>()
             .expect("Invalid base64 encoded ENR")
     });
 
+    let mut ipv4_address = None;
+    let mut ipv6_address = None;
+    for address in server.listen_addresses.split(',') {
+        match address
+            .parse::<IpAddr>()
+            .expect("Invalid listening address")
+        {
+            IpAddr::V4(ip) => ipv4_address = Some(ip),
+            IpAddr::V6(ip) => ipv6_address = Some(ip),
+        }
+    }
+
+    let listen_port = server.listen_port;
+    let listen_port_v6 = server.listen_port_v6;
+
+    let listen_config = ListenConfig::from_two_sockets(
+        ipv4_address.map(|v| SocketAddrV4::new(v, listen_port)),
+        ipv6_address.map(|v| SocketAddrV6::new(v, listen_port_v6.unwrap_or(listen_port), 0, 0)),
+    );
+
+    log::info!("Server listening on {:?}", listen_config);
     // Build the discv5 server using a default config
-    let config = Discv5ConfigBuilder::new()
+    let config = Discv5ConfigBuilder::new(listen_config)
         .enr_peer_update_min(peer_update_min.try_into().unwrap())
         .build();
     let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
@@ -67,16 +88,10 @@ pub async fn run(server: &Server) {
     }
 
     // Start the discv5 server
-    let listen_address = server
-        .listen_address
-        .parse::<IpAddr>()
-        .expect("Invalid listening address");
-    let listen_port = server.listen_port;
     discv5
-        .start(SocketAddr::new(listen_address, listen_port))
+        .start()
         .await
         .expect("Should be able to start the server");
-    log::info!("Server listening on {listen_address}:{listen_port}");
 
     let server_ref = Arc::new(discv5);
     if server.stats > 0 {

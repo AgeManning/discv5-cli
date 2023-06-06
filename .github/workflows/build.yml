@@ -1,5 +1,4 @@
 name: build
-
 on:
   push:
     branches:
@@ -7,17 +6,18 @@ on:
   pull_request:
     branches:
       - master
-
 jobs:
   cargo-fmt:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: nightly
+          profile: minimal
+          components: rustfmt, clippy
           override: true
+      - uses: arduino/setup-protoc@v1
       - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
@@ -25,14 +25,15 @@ jobs:
           args: --all -- --check
   cargo-tests:
     runs-on: ubuntu-latest
-    needs: cargo-fmt
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: nightly
+          profile: minimal
+          components: rustfmt, clippy
           override: true
+      - uses: arduino/setup-protoc@v1
       - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
@@ -42,12 +43,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: cargo-fmt
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: nightly
+          profile: minimal
+          components: rustfmt, clippy
           override: true
+      - uses: arduino/setup-protoc@v1
       - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:

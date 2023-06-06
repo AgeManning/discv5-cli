@@ -19,11 +19,11 @@ pub struct Server {
     /// Specifies the listening address of the server.
     #[clap(
         short = 'l',
-        long = "listen-address",
-        help = "Specifies the listening address of the server.",
+        long = "listen-addresses",
+        help = "Specifies the listening address(es) of the server. A comma separated string can specify ipv4 and ipv6 addresses for dual stack.",
         default_value = "0.0.0.0"
     )]
-    pub listen_address: String,
+    pub listen_addresses: String,
     /// Specifies the listening UDP port of the server.
     #[clap(
         short = 'p',
@@ -32,20 +32,34 @@ pub struct Server {
         default_value = "9000"
     )]
     pub listen_port: u16,
+    /// Optionally specify the listening ipv6 port.
+    #[clap(
+        short = 'p',
+        long = "listen-port-v6",
+        help = "Specifies the listening UDP port of the server if an ipv6 address is specified as a listening address."
+    )]
+    pub listen_port_v6: Option<u16>,
     /// Specifies the IP address of the ENR record. Not specifying this results in an ENR with no IP field, unless the -w switch is used.
     #[clap(
         short = 'i',
-        long = "enr-address",
-        help = "Specifies the IP address of the ENR record. Not specifying this results in an ENR with no IP field, unless the -w switch is used."
+        long = "enr-addresses",
+        help = "Specifies the IP address(es) of the ENR record. Not specifying this results in an ENR with no IP field, unless the -w switch is used. These can be a comma separated addresses of ipv4,ipv6. Only the last two are used."
     )]
-    pub enr_address: Option<String>,
+    pub enr_addresses: Option<String>,
     /// Specifies the UDP port of the ENR record. Not specifying this results in an ENR with no UDP field, unless the -w switch is used.
     #[clap(
         short = 'u',
-        long = "enr-port",
-        help = "Specifies the UDP port of the ENR record. Not specifying this results in an ENR with no UDP field, unless the -w switch is used."
+        long = "enr-v4-port",
+        help = "Specifies the UDP port of the ENR record corresponding to ipv4 address. Not specifying this results in an ENR with no UDP field, unless the -w switch is used."
     )]
-    pub enr_port: Option<u16>,
+    pub enr_v4_port: Option<u16>,
+    /// The port associated with an ipv6 address.
+    #[clap(
+        short = 'u',
+        long = "enr-v6-port",
+        help = "Specifies the UDP port of the ENR record corresponding to ipv6 address. Not specifying this results in an ENR with no UDP field, unless the -w switch is used."
+    )]
+    pub enr_v6_port: Option<u16>,
     /// Specifies the ENR sequence number when creating the ENR.
     #[clap(
         short = 'q',
