@@ -3,6 +3,7 @@ use libp2p_core::Multiaddr;
 
 mod enr_ext;
 use enr_ext::EnrExt;
+use std::net::Ipv4Addr;
 
 /// The [clap] cli command arguments for the request-enr service.
 pub mod command;
@@ -17,8 +18,12 @@ pub async fn run(req: &RequestEnr) {
         .expect("Invalid Multiaddr provided");
 
     // Set up a server to receive the response
-    let listen_address = std::net::Ipv4Addr::UNSPECIFIED;
-    let listen_port = 9001;
+    let listen_address = req
+        .listen_address
+        .parse::<Ipv4Addr>()
+        .expect("Invalid listening address");
+
+    let listen_port = req.listen_port;
     let listen_config = ListenConfig::from_ip(listen_address.into(), listen_port);
     let enr_key = enr::CombinedKey::generate_secp256k1();
 
