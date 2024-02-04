@@ -142,8 +142,10 @@ Requests an ENR from a node
 Usage: discv5-cli request-enr --multiaddr <MULTIADDR>
 
 Options:
-  -m, --multiaddr <MULTIADDR>  The multiaddr of the node to request their ENR from
-  -h, --help                   Print help information
+  -m, --multiaddr <MULTIADDR>             The multiaddr of the node to request their ENR from
+  -h, --help                              Print help information
+  -l, --listen-address <LISTEN_ADDRESS>   Specifies the listening address of the server. [default: 0.0.0.0]
+  -p, --listen-port <LISTEN_PORT>         Specifies the listening UDP port of the server. [default: 9001]
 ```
 
 
