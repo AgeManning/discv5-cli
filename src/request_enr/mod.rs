@@ -28,14 +28,14 @@ pub async fn run(req: &RequestEnr) {
     let enr_key = enr::CombinedKey::generate_secp256k1();
 
     // Build a local ENR
-    let enr = enr::EnrBuilder::new("v4")
+    let enr = enr::Builder::default()
         .ip4(listen_address)
         .udp4(listen_port)
         .build(&enr_key)
         .unwrap();
 
     // Construct the discv5 service
-    let config = discv5::Discv5ConfigBuilder::new(listen_config).build();
+    let config = discv5::ConfigBuilder::new(listen_config).build();
     let mut discv5: discv5::Discv5 = discv5::Discv5::new(enr, enr_key, config).unwrap();
 
     // Start the server

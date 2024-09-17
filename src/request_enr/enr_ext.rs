@@ -23,6 +23,7 @@ pub trait CombinedKeyPublicExt {
 }
 
 /// Extend ENR CombinedKey for conversion to libp2p keys.
+#[allow(dead_code)]
 pub trait CombinedKeyExt {
     /// Converts a libp2p key into an ENR combined key.
     fn from_libp2p(key: &Keypair) -> Result<CombinedKey, &'static str>;

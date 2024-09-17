@@ -7,7 +7,7 @@ pub fn build(
     server: &super::command::Server,
     enr_key: &enr::CombinedKey,
 ) -> eyre::Result<enr::Enr<enr::CombinedKey>> {
-    let mut builder = enr::EnrBuilder::new("v4");
+    let mut builder = enr::Builder::default();
 
     // Extract params from server config
     let mut ipv4_address = None;

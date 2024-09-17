@@ -1,4 +1,4 @@
-use discv5::{enr, Discv5, Discv5ConfigBuilder, ListenConfig};
+use discv5::{enr, ConfigBuilder, Discv5, ListenConfig};
 use std::{
     convert::TryInto,
     net::{IpAddr, SocketAddrV4, SocketAddrV6},
@@ -59,7 +59,7 @@ pub async fn run(server: &Server) {
 
     log::info!("Server listening on {:?}", listen_config);
     // Build the discv5 server using a default config
-    let config = Discv5ConfigBuilder::new(listen_config)
+    let config = ConfigBuilder::new(listen_config)
         .enr_peer_update_min(peer_update_min.try_into().unwrap())
         .build();
     let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();

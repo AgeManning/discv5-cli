@@ -1,7 +1,7 @@
 #![doc=include_str!("../README.md")]
 
 use clap::Parser;
-use discv5_cli::{cli, packet, prelude::Packet};
+use discv5_cli::{cli, packet};
 
 #[tokio::main]
 async fn main() {
@@ -19,7 +19,7 @@ async fn main() {
         Some(cli::Subcommand::RequestEnr(ref request_enr)) => {
             discv5_cli::request_enr::run(request_enr).await;
         }
-        Some(cli::Subcommand::Packet(Packet { subcommand })) => match subcommand {
+        Some(cli::Subcommand::Packet(packet::Packet { subcommand })) => match subcommand {
             packet::PacketSubcommand::Decode(ref decode) => {
                 packet::decode(decode);
             }
