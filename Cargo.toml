@@ -15,7 +15,7 @@ exclude = [
 ]
 
 [dependencies]
-discv5 = { version = "0.7", features = ["libp2p"] }
+discv5 = { version = "0.8", features = ["libp2p"] }
 sha2 = "0.10"
 libsecp256k1 = "0.7"
 libp2p-identity = { version = "0.2.9", features = ["secp256k1"] }
