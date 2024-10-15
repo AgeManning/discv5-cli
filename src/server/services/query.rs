@@ -16,7 +16,7 @@ pub async fn run(discv5: Arc<Discv5>, break_time: Duration) {
                 }
             }
         }
-        log::info!("Connected Peers: {}", discv5.connected_peers());
+
         tokio::time::sleep(break_time).await;
     }
 }
