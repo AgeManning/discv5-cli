@@ -34,7 +34,7 @@ pub struct Server {
     pub listen_port: u16,
     /// Optionally specify the listening ipv6 port.
     #[clap(
-        short = 'p',
+        short = '6',
         long = "listen-port-v6",
         help = "Specifies the listening UDP port of the server if an ipv6 address is specified as a listening address."
     )]
@@ -55,7 +55,7 @@ pub struct Server {
     pub enr_v4_port: Option<u16>,
     /// The port associated with an ipv6 address.
     #[clap(
-        short = 'u',
+        short = 'U',
         long = "enr-v6-port",
         help = "Specifies the UDP port of the ENR record corresponding to ipv6 address. Not specifying this results in an ENR with no UDP field, unless the -w switch is used."
     )]
