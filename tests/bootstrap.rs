@@ -1,4 +1,4 @@
-use discv5::{ConnectionState, Discv5, Discv5ConfigBuilder, ListenConfig};
+use discv5::{ConfigBuilder, ConnectionState, Discv5, ListenConfig};
 use discv5_cli::server::{bootstrap, command, enr_build, keys};
 
 #[tokio::test]
@@ -23,7 +23,7 @@ pub async fn test_bootstrap_file() -> std::result::Result<(), eyre::Report> {
             .expect("Valid IP"),
         server.listen_port,
     );
-    let config = Discv5ConfigBuilder::new(listen_config)
+    let config = ConfigBuilder::new(listen_config)
         .enr_peer_update_min(2usize)
         .build();
     let mut discv5 = Discv5::new(enr, enr_key, config).unwrap();
